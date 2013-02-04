@@ -4,7 +4,7 @@ public class Board {
 
 	private Square[] board = new Square[28];
 	
-	public Board(){
+	public Board(){ 
 		for(int i = 0; i < 28; i++){
 			board[i] = new Square();
 		}
