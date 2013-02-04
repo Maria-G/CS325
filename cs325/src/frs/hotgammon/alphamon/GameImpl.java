@@ -18,14 +18,26 @@ package frs.hotgammon.alphamon;
 */
 
 public class GameImpl implements Game {
+  private Board gameBoard = new Board();
+  private Color playerInTurn;
+  private int[][] diceRolls = { {1,2}, {3,4}, {5,6} };
+  private int diceRollIdx = 3;
+  
   public void newGame() {}
-  public void nextTurn() {}
-  public boolean move(Location from, Location to) { return false; }
-  public Color getPlayerInTurn() { return Color.NONE; }
+  public void nextTurn() {
+	  playerInTurn = (playerInTurn == Color.BLACK) ? Color.RED : Color.BLACK;
+	  diceRollIdx = (diceRollIdx < 3) ? diceRollIdx + 1 : 0;
+  }
+  public boolean move(Location from, Location to) { 
+	  return gameBoard.move(from, to, playerInTurn);
+  }
+  
+  public Color getPlayerInTurn() { return playerInTurn; }
+  
   public int getNumberOfMovesLeft() { return 0; }
-  public int[] diceThrown() { return new int[] {1,1}; }
+  public int[] diceThrown() { return diceRolls[diceRollIdx]; }
   public int[] diceValuesLeft() { return new int []{}; }
-  public Color winner() { return Color.NONE; }
+  public Color winner() { return Color.RED; }
   public Color getColor(Location location) { return Color.NONE; }
-  public int getCount(Location location) { return 0; }
+  public int getCount(Location location) { return 2; }
 }
