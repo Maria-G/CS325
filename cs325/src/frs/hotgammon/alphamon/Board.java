@@ -2,55 +2,14 @@ package frs.hotgammon.alphamon;
 
 public class Board {
 
-	private Square[] board = new Square[28];
+	private final int SQUARES_ON_BOARD = 28;
+	private Square[] board = new Square[SQUARES_ON_BOARD];
 	
 	public Board(){ 
 		for(int i = 0; i < 28; i++){
 			board[i] = new Square();
 		}
-		
-		// B1 = 2 red
-		board[Location.B1.ordinal()].add(Color.RED);
-		board[Location.B1.ordinal()].add(Color.RED);
-		// B6 = 5 black
-		board[Location.B6.ordinal()].add(Color.BLACK);
-		board[Location.B6.ordinal()].add(Color.BLACK);
-		board[Location.B6.ordinal()].add(Color.BLACK);
-		board[Location.B6.ordinal()].add(Color.BLACK);
-		board[Location.B6.ordinal()].add(Color.BLACK);
-		// B8 = 3 black
-		board[Location.B8.ordinal()].add(Color.BLACK);
-		board[Location.B8.ordinal()].add(Color.BLACK);
-		board[Location.B8.ordinal()].add(Color.BLACK);
-		// B12 = 5 red
-		board[Location.B12.ordinal()].add(Color.RED);
-		board[Location.B12.ordinal()].add(Color.RED);
-		board[Location.B12.ordinal()].add(Color.RED);
-		board[Location.B12.ordinal()].add(Color.RED);
-		board[Location.B12.ordinal()].add(Color.RED);
-		// R12 = 5 black
-		board[Location.R12.ordinal()].add(Color.BLACK);
-		board[Location.R12.ordinal()].add(Color.BLACK);
-		board[Location.R12.ordinal()].add(Color.BLACK);
-		board[Location.R12.ordinal()].add(Color.BLACK);
-		board[Location.R12.ordinal()].add(Color.BLACK);
-		
-		// R8 = 3 red
-		board[Location.R8.ordinal()].add(Color.RED);
-		board[Location.R8.ordinal()].add(Color.RED);
-		board[Location.R8.ordinal()].add(Color.RED);
-		
-		// R6 = 5 red
-		board[Location.R6.ordinal()].add(Color.RED);
-		board[Location.R6.ordinal()].add(Color.RED);
-		board[Location.R6.ordinal()].add(Color.RED);
-		board[Location.R6.ordinal()].add(Color.RED);
-		board[Location.R6.ordinal()].add(Color.RED);
-		
-		// R1 = 2 black
-		board[Location.R1.ordinal()].add(Color.BLACK);
-		board[Location.R1.ordinal()].add(Color.BLACK);
-	}
+	}	
 	
 	public boolean move(Location from, Location to, Color playerInTurn){
 		Square sqFrom = board[from.ordinal()];
@@ -67,6 +26,31 @@ public class Board {
 		return false;
 	}
 	
+	public int getCountAt(Location loc){
+		
+		return board[loc.ordinal()].getCount();
+		
+	}
+
+	public Color getColorAt(Location loc){
+		
+		return board[loc.ordinal()].getColor();
+		
+	}
+	
+	public boolean add(Color col, Location loc){
+		
+		int index = loc.ordinal();
+		
+		if( index > 0 && index < SQUARES_ON_BOARD){
+			if(board[index].color == null || board[index].color == col){
+				board[index].color = col;
+				board[index].count++;
+				return true;
+			}		
+		}
+		return false;
+	}
 	
 	class Square{
 		private int count = 0;
