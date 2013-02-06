@@ -70,6 +70,9 @@ public class Board {
 
 			if(this.color == col && this.count > 0){
 				this.count--;
+				if (this.count == 0){
+					this.color = Color.NONE;
+				}
 				return true;
 			}			
 			return false;

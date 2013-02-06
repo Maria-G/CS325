@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class GameTests {
 
-	GameImpl game;
+	  GameImpl game;
 	  /** Fixture */
 	  @Before
 	  public void setUp() {
@@ -15,6 +15,10 @@ public class GameTests {
 	    game.newGame();
 	  }
 
+	  @Test public void shouldBeNonePlayerInTurnAfterNewGame() {
+		    assertEquals(Color.NONE, game.getPlayerInTurn());
+		  }
+	  
 	  @Test public void shouldBeBlackInTurnAfterFirstNextTurn() {
 	    game.nextTurn();
 	    assertEquals(Color.BLACK, game.getPlayerInTurn());
@@ -31,12 +35,14 @@ public class GameTests {
 	  }
 
 	  @Test public void shouldBeInvalidToMoveFromR1ToB1AtStartOfGame() {
-	    assertFalse(game.move(Location.R1, Location.B1));
+		  game.nextTurn();
+		  assertFalse(game.move(Location.R1, Location.B1));
 	  }
 	  
 	  @Test public void shouldBeNoMovesLeftAfterMovingTwoBlackCheckersFromR1toR2() {
-		game.move(Location.R1, Location.B1);
-		game.move(Location.R1, Location.B1);
+		game.nextTurn();
+		game.move(Location.R1, Location.R2);
+		game.move(Location.R1, Location.R2);
 		 
 		assertEquals(0,game.getNumberOfMovesLeft());
 	  }
@@ -78,7 +84,7 @@ public class GameTests {
 			game.nextTurn();
 			game.nextTurn();
 			
-			assertEquals("Winner should be null", null, game.winner());
+			assertEquals("Winner should be null", Color.NONE, game.winner());
 	  
 	  }
 	  
@@ -96,8 +102,10 @@ public class GameTests {
 	  }
 	  
 	  @Test public void shouldNotBeAbleToPlaceTwoDifferentColorsOnSameSquare() {
-			game.move(Location.B1, Location.B2);
-			assertFalse(game.move(Location.B6, Location.B2));
+		  game.nextTurn();
+		  game.move(Location.B6, Location.B2);
+		  game.nextTurn();
+		  assertFalse(game.move(Location.B1, Location.B2));
 	}
 
 	  @Test public void shouldBeAbleToPlaceTwoSameColorPiecesOnSameSquare() {
@@ -107,7 +115,8 @@ public class GameTests {
 	}
 
 	  @Test public void shouldReturnProperCountForGivenSquare() {
-			assertEquals("Count should be 2", 2, game.getCount(Location.B1));
+		  game.nextTurn();
+		  assertEquals("Count should be 2", 2, game.getCount(Location.B1));
 	}
 
 	  @Test public void shouldNotBeAbleToRemovePlayerOfWrongColor() {
@@ -115,7 +124,7 @@ public class GameTests {
 			assertFalse("Should not be able to remove Red pieces.", game.move(Location.B1, Location.B2));
 	}
 
-	  @Test public void shouldBeAbleToRemovePlayerOfWrongColor() {
+	  @Test public void shouldBeAbleToRemovePlayerOfRightColor() {
 		  	game.nextTurn();
 		  	game.nextTurn();
 			assertTrue("Should be able to remove Red pieces.", game.move(Location.B1, Location.B2));

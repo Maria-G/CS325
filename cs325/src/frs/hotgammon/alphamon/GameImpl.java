@@ -26,32 +26,11 @@ public class GameImpl implements Game {
   
   public void newGame() {
 	  gameBoard = new Board();
-	  playerInTurn = null;
+	  playerInTurn = Color.NONE;
 	  diceRollIdx = 3;
 	  turns = 0;
-	  setBoard();
-  }
-  public void nextTurn() {
-	  playerInTurn = (playerInTurn == Color.BLACK) ? Color.RED : Color.BLACK;
-	  diceRollIdx = (diceRollIdx < 3) ? diceRollIdx + 1 : 0;
-	  turns++;
-  }
-  public boolean move(Location from, Location to) { 
-	  return gameBoard.move(from, to, playerInTurn);
-  }
-  
-  public Color getPlayerInTurn() { return playerInTurn; }
-  
-  public int getNumberOfMovesLeft() { return 0; }
-  public int[] diceThrown() { return DICE_ROLLS[diceRollIdx]; }
-  public int[] diceValuesLeft() { return new int []{}; }
-  public Color winner() { return (turns == 6) ? Color.RED : null; }
-  public Color getColor(Location location) { return gameBoard.getColorAt(location); }
-  public int getCount(Location location) { return gameBoard.getCountAt(location); }
-  
-  
-  public void setBoard(){
 
+	  	//Set Board:
 		// B1 = 2 red
 		gameBoard.add(Color.RED,Location.B1);
 		gameBoard.add(Color.RED,Location.B1);
@@ -91,5 +70,25 @@ public class GameImpl implements Game {
 		gameBoard.add(Color.BLACK,Location.R1);
 		gameBoard.add(Color.BLACK,Location.R1);
   }
+  
+  public void nextTurn() {
+	  playerInTurn = (playerInTurn == Color.BLACK) ? Color.RED : Color.BLACK;
+	  diceRollIdx = (diceRollIdx < 2) ? diceRollIdx + 1 : 0;
+	  turns++;
+  }
+  public boolean move(Location from, Location to) { 
+	  return gameBoard.move(from, to, playerInTurn);
+  }
+  
+  public Color getPlayerInTurn() { return playerInTurn; }
+  
+  public int getNumberOfMovesLeft() { return 0; }
+  public int[] diceThrown() { return DICE_ROLLS[diceRollIdx]; }
+  public int[] diceValuesLeft() { return new int []{}; }
+  public Color winner() { return (turns == 6) ? Color.RED : Color.NONE; }
+  public Color getColor(Location location) { return gameBoard.getColorAt(location); }
+  public int getCount(Location location) { return gameBoard.getCountAt(location); }
+  
+  
 }
 
