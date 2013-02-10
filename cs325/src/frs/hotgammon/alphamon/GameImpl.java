@@ -22,6 +22,7 @@ public class GameImpl implements Game {
   private Color playerInTurn;
   private final int[][] DICE_ROLLS = { {1,2}, {3,4}, {5,6} };
   private int diceRollIdx;
+  private int movesLeft;
   private int turns;
   
   public void newGame() {
@@ -75,14 +76,22 @@ public class GameImpl implements Game {
 	  playerInTurn = (playerInTurn == Color.BLACK) ? Color.RED : Color.BLACK;
 	  diceRollIdx = (diceRollIdx < 2) ? diceRollIdx + 1 : 0;
 	  turns++;
+	  movesLeft = 2;
   }
   public boolean move(Location from, Location to) { 
-	  return gameBoard.move(from, to, playerInTurn);
+	  if (movesLeft > 0){
+		  boolean wasMoved = gameBoard.move(from, to, playerInTurn);
+	  	if( wasMoved ){
+		  	movesLeft--;
+	  	}
+	  	return wasMoved;//gameBoard.move(from, to, playerInTurn);
+	  }
+	  return false;
   }
   
   public Color getPlayerInTurn() { return playerInTurn; }
   
-  public int getNumberOfMovesLeft() { return 0; }
+  public int getNumberOfMovesLeft() { return movesLeft; }
   public int[] diceThrown() { return DICE_ROLLS[diceRollIdx]; }
   public int[] diceValuesLeft() { return new int []{}; }
   public Color winner() { return (turns == 6) ? Color.RED : Color.NONE; }
