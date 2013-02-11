@@ -1,6 +1,9 @@
 package frs.hotgammon.alphamon;
 import org.junit.*;
 
+import frs.hotgammon.Color;
+import frs.hotgammon.Location;
+
 import assignments.frs.chap5.Breakthrough;
 import assignments.frs.chap5.BreakthroughImpl;
 import static org.junit.Assert.*;

@@ -1,4 +1,4 @@
-package frs.hotgammon.alphamon;
+package frs.hotgammon;
 /** This class represents an enumeration of colours used in
  * Backgammon.  We need to represent the red or the black colour - but
  * also in some casese neither of the colours, for instance if we ask

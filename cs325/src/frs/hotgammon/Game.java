@@ -1,4 +1,6 @@
-package frs.hotgammon.alphamon;
+package frs.hotgammon;
+
+
 /** This interface encapsulate all responsibilites of
     a Backgammon game. Please consult the book's
     project part for further descriptions.

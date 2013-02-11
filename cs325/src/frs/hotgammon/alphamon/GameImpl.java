@@ -1,5 +1,11 @@
 package frs.hotgammon.alphamon;
 
+import frs.hotgammon.Board;
+import frs.hotgammon.Color;
+import frs.hotgammon.Game;
+import frs.hotgammon.Location;
+import frs.hotgammon.MoveValidator;
+
 /** Skeleton implementation of HotGammon.
  
    This source code is from the book 
@@ -24,9 +30,14 @@ public class GameImpl implements Game {
   private int diceRollIdx;
   private int movesLeft;
   private int turns;
+  private MoveValidator validator;
+  
+  public GameImpl(){
+	  validator = new AlphaMoveValidator(this);
+  }
   
   public void newGame() {
-	  gameBoard = new Board();
+	  gameBoard = new BoardImpl();
 	  playerInTurn = Color.NONE;
 	  diceRollIdx = 3;
 	  turns = 0;
@@ -79,14 +90,15 @@ public class GameImpl implements Game {
 	  movesLeft = 2;
   }
   public boolean move(Location from, Location to) { 
-	  if (movesLeft > 0){
-		  boolean wasMoved = gameBoard.move(from, to, playerInTurn);
-	  	if( wasMoved ){
-		  	movesLeft--;
-	  	}
-	  	return wasMoved;//gameBoard.move(from, to, playerInTurn);
+	  if (movesLeft == 0){
+		  return false;
+	  }
+	  if (validator.isValid(from, to)){
+		  movesLeft--;
+		  return gameBoard.move(from, to, playerInTurn);
 	  }
 	  return false;
+	  
   }
   
   public Color getPlayerInTurn() { return playerInTurn; }

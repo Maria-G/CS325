@@ -5,7 +5,9 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import frs.hotgammon.alphamon.Board.Square;
+import frs.hotgammon.Board;
+import frs.hotgammon.Color;
+import frs.hotgammon.Location;
 
 public class BoardTests {
 
@@ -13,7 +15,7 @@ public class BoardTests {
 	
 	@Before
 	public void setUp(){
-		board = new Board();
+		board = new BoardImpl();
 	}
 	
 	@Test
@@ -25,7 +27,7 @@ public class BoardTests {
 	@Test
 	public void shouldGetNoColorAtStartOfGame() {
 
-		assertEquals("Color should have been null.", null, board.getColorAt(Location.R1));
+		assertEquals("Color should have been NONE.", Color.NONE, board.getColorAt(Location.R1));
 	}
 	
 	@Test
