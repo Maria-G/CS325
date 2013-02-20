@@ -1,8 +1,9 @@
-package frs.hotgammon.alphamon;
+package frs.hotgammon.common;
 
 import frs.hotgammon.Board;
 import frs.hotgammon.Color;
 import frs.hotgammon.Location;
+
 
 
 public class BoardImpl implements Board {
@@ -11,10 +12,16 @@ public class BoardImpl implements Board {
 	private Square[] board = new Square[SQUARES_ON_BOARD];
 	
 	public BoardImpl(){ 
-		for(int i = 0; i < 28; i++){
+		for(int i = 0; i < SQUARES_ON_BOARD; i++){
 			board[i] = new Square();
 		}
 	}	
+	
+	public BoardImpl(int squaresOnBoard){ 
+		for(int i = 0; i < squaresOnBoard; i++){
+			board[i] = new Square();
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see frs.hotgammon.BoardInter#move(frs.hotgammon.Location, frs.hotgammon.Location, frs.hotgammon.Color)
@@ -22,19 +29,10 @@ public class BoardImpl implements Board {
 	@Override
 	public boolean move(Location from, Location to, Color playerInTurn){
 
+		boolean rem = remove(playerInTurn, from.ordinal());
+		boolean add = place(playerInTurn,to.ordinal());
+		return ( rem && add );
 		
-		Square sqFrom = board[from.ordinal()];
-		Square sqTo = board[to.ordinal()];
-		Color sqFCol = sqFrom.getColor();
-		Color sqTCol = sqTo.getColor();		
-		
-		if ( sqFCol == playerInTurn &&(sqFCol == sqTCol || sqTCol == Color.NONE)){
-			if ( sqFrom.remove(sqFCol) ) {
-				sqTo.add(sqFCol);
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -56,34 +54,39 @@ public class BoardImpl implements Board {
 		return board[loc.ordinal()].getColor();
 		
 	}
-	
-	/* (non-Javadoc)
-	 * @see frs.hotgammon.BoardInter#add(frs.hotgammon.Color, frs.hotgammon.Location)
-	 */
+
 	@Override
-	public boolean add(Color col, Location loc){
+	public boolean place(Color col, int index){
 		
-		int index = loc.ordinal();
-		
-		if( index > 0 && index < SQUARES_ON_BOARD){
-			if(board[index].color == Color.NONE || board[index].color == col){
-				board[index].color = col;
-				board[index].count++;
+		if( index > -1 && index < SQUARES_ON_BOARD){
+				board[index].add(col);
 				return true;
-			}		
+		}
+		return false;
+	}
+
+	@Override
+	public boolean remove(Color col, int index){
+		
+		if( index > -1 && index < SQUARES_ON_BOARD){
+			if( board[index].color == col ){
+				board[index].remove(col);
+				return true;
+			}
 		}
 		return false;
 	}
 	
-	class Square{
-		private int count = 0;
+	
+	public class Square{
+		public int occupants = 0;
 		private Color color = Color.NONE;
 				
 		public boolean add(Color col){
 			
 			if(this.color == Color.NONE || this.color == col){
 				this.color = col;
-				this.count++;
+				this.occupants++;
 				return true;
 			}			
 			return false;
@@ -91,9 +94,9 @@ public class BoardImpl implements Board {
 		
 		public boolean remove(Color col){
 
-			if(this.color == col && this.count > 0){
-				this.count--;
-				if (this.count == 0){
+			if(this.color == col && this.occupants > 0){
+				this.occupants--;
+				if (this.occupants == 0){
 					this.color = Color.NONE;
 				}
 				return true;
@@ -106,8 +109,15 @@ public class BoardImpl implements Board {
 		}
 		
 		public int getCount(){
-			return this.count;
+			return this.occupants;
 		}
 		
 	}
+
+
+	public Square getSquare(int ordinal) {
+		return board[ordinal];
+	}
+
+
 }

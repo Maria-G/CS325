@@ -1,4 +1,4 @@
-package frs.hotgammon.alphamon;
+package frs.hotgammon.mariatests;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,8 @@ import org.junit.Test;
 import frs.hotgammon.Board;
 import frs.hotgammon.Color;
 import frs.hotgammon.Location;
+import frs.hotgammon.common.BoardImpl;
+
 
 public class BoardTests {
 
@@ -32,14 +34,14 @@ public class BoardTests {
 	
 	@Test
 	public void shouldAddOneRedPieceToSquareAtIndex1() {
-		boolean wasAdded = board.add(Color.RED, Location.R1);
+		boolean wasAdded = board.place(Color.RED, Location.R1.ordinal());
 		assertTrue("Should have been able to add a red piece to a new board", wasAdded);
 		assertEquals("Count should have been 1.", 1, board.getCountAt(Location.R1));
 		assertEquals("Color should have been Red.", Color.RED, board.getColorAt(Location.R1));
 	}
 	
 	@Test public void shouldBeAbleToMoveToNewLocation() {
-	      board.add(Color.RED, Location.R1);
+	      board.place(Color.RED, Location.R1.ordinal());
 		  assertTrue(board.move(Location.R1, Location.R2, Color.RED));
 	  }
 

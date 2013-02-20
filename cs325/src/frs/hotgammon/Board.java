@@ -8,6 +8,8 @@ public interface Board {
 
 	public abstract Color getColorAt(Location loc);
 
-	public abstract boolean add(Color col, Location loc);
+	public abstract boolean place(Color col, int index);
+	
+	public boolean remove(Color col, int index);
 
 }

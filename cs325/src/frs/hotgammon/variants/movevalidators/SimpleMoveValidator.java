@@ -1,14 +1,12 @@
-package frs.hotgammon.alphamon;
+package frs.hotgammon.variants.movevalidators;
 
 import frs.hotgammon.*;
-import frs.hotgammon.alphamon.BoardImpl.Square;
 
-public class AlphaMoveValidator implements MoveValidator{
+public class SimpleMoveValidator implements MoveValidator{
 
 	private Game game;
 	
-	public AlphaMoveValidator(Game game){
-		this.game = game;
+	public SimpleMoveValidator(){
 	}
 	
 	@Override
@@ -32,6 +30,12 @@ public class AlphaMoveValidator implements MoveValidator{
 			}
 		}
 		return true;
+		
+	}
+
+	@Override
+	public void setGame(Game game) {
+		this.game = game;
 		
 	}
 
