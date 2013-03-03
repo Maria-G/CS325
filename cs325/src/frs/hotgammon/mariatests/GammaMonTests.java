@@ -10,6 +10,7 @@ import frs.hotgammon.Location;
 import frs.hotgammon.common.GameImpl;
 import frs.hotgammon.common.GameImpl.Placement;
 import frs.hotgammon.variants.movevalidators.SimpleMoveValidator;
+import frs.hotgammon.variants.rolldeterminers.PairSequenceDeterminer;
 import frs.hotgammon.variants.turndeterminers.AlternatingTurnDeterminer;
 import frs.hotgammon.variants.winnerdeterminers.BearOffWinnerDeterminer;
 
@@ -19,7 +20,7 @@ public class GammaMonTests {
 
 	@Before
 	public void setup() {
-		game = new GameImpl(new SimpleMoveValidator(), new BearOffWinnerDeterminer(), new AlternatingTurnDeterminer());
+		game = new GameImpl(new SimpleMoveValidator(), new BearOffWinnerDeterminer(), new AlternatingTurnDeterminer(), new PairSequenceDeterminer());
 		game.newGame();
 	}
 

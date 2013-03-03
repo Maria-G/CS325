@@ -9,6 +9,7 @@ import frs.hotgammon.Color;
 import frs.hotgammon.Location;
 import frs.hotgammon.common.GameImpl;
 import frs.hotgammon.variants.movevalidators.CompleteMoveValidator;
+import frs.hotgammon.variants.rolldeterminers.PairSequenceDeterminer;
 import frs.hotgammon.variants.turndeterminers.AlternatingTurnDeterminer;
 import frs.hotgammon.variants.winnerdeterminers.SixMoveWinnerDeterminer;
 import frs.hotgammon.common.GameImpl.Placement;
@@ -19,7 +20,7 @@ public class BetaMonTests {
 	  /** Fixture */
 	  @Before
 	  public void setUp() {
-	    game = new GameImpl(new CompleteMoveValidator(), new SixMoveWinnerDeterminer(), new AlternatingTurnDeterminer());
+	    game = new GameImpl(new CompleteMoveValidator(), new SixMoveWinnerDeterminer(), new AlternatingTurnDeterminer(), new PairSequenceDeterminer());
 	    game.newGame();
 	   
 	  }

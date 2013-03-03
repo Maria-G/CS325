@@ -10,6 +10,7 @@ import frs.hotgammon.Color;
 import frs.hotgammon.common.GameImpl;
 
 import frs.hotgammon.variants.movevalidators.SimpleMoveValidator;
+import frs.hotgammon.variants.rolldeterminers.PairSequenceDeterminer;
 import frs.hotgammon.variants.turndeterminers.AceyDeuceyTurnDeterminer;
 import frs.hotgammon.variants.winnerdeterminers.SixMoveWinnerDeterminer;
 
@@ -19,7 +20,10 @@ public class DeltaMonTests {
 
 	@Before
 	public void setup() { 
-		game = new GameImpl(new SimpleMoveValidator(), new SixMoveWinnerDeterminer(), new AceyDeuceyTurnDeterminer());
+		game = new GameImpl(new SimpleMoveValidator(), 
+				new SixMoveWinnerDeterminer(), 
+				new AceyDeuceyTurnDeterminer(), 
+				new PairSequenceDeterminer());
 		game.newGame();
 	}
 	

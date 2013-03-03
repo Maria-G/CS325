@@ -14,11 +14,13 @@ import org.junit.runners.Parameterized.Parameters;
 
 import frs.hotgammon.Color;
 import frs.hotgammon.MoveValidator;
+import frs.hotgammon.RollDeterminer;
 import frs.hotgammon.TurnDeterminer;
 import frs.hotgammon.WinnerDeterminer;
 import frs.hotgammon.common.GameImpl;
 import frs.hotgammon.variants.movevalidators.CompleteMoveValidator;
 import frs.hotgammon.variants.movevalidators.SimpleMoveValidator;
+import frs.hotgammon.variants.rolldeterminers.PairSequenceDeterminer;
 import frs.hotgammon.variants.turndeterminers.AceyDeuceyTurnDeterminer;
 import frs.hotgammon.variants.turndeterminers.AlternatingTurnDeterminer;
 import frs.hotgammon.variants.winnerdeterminers.BearOffWinnerDeterminer;
@@ -28,17 +30,16 @@ import frs.hotgammon.variants.winnerdeterminers.SixMoveWinnerDeterminer;
 public class SixMoveWinnerTests {
 private GameImpl game;
 	
-	public SixMoveWinnerTests(MoveValidator mValidator, WinnerDeterminer wDeterminer, TurnDeterminer tDeterminer) {
-		game = new GameImpl(mValidator, wDeterminer, tDeterminer);
-		game.newGame();
-		
+	public SixMoveWinnerTests(MoveValidator validator, WinnerDeterminer winnerDeterminer, TurnDeterminer ntd, RollDeterminer rDeterminer) {
+		game = new GameImpl(validator, winnerDeterminer, ntd, rDeterminer);
+		game.newGame();		
 	}
 	
 	@Parameters
 	 public static Collection<Object[]> data() {
-	   Object[][] data = new Object[][] { { new SimpleMoveValidator(), new SixMoveWinnerDeterminer(), new AlternatingTurnDeterminer() },
-			                              { new CompleteMoveValidator(), new SixMoveWinnerDeterminer() , new AlternatingTurnDeterminer()},
-			                              { new SimpleMoveValidator(), new SixMoveWinnerDeterminer() , new AceyDeuceyTurnDeterminer()},
+	   Object[][] data = new Object[][] { { new SimpleMoveValidator(), new SixMoveWinnerDeterminer(), new AlternatingTurnDeterminer(), new PairSequenceDeterminer()},
+			                              { new CompleteMoveValidator(), new SixMoveWinnerDeterminer() , new AlternatingTurnDeterminer(), new PairSequenceDeterminer()},
+			                              { new SimpleMoveValidator(), new SixMoveWinnerDeterminer() , new AceyDeuceyTurnDeterminer(), new PairSequenceDeterminer()},
 	   };
 	   return Arrays.asList(data);
 	 }

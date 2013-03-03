@@ -9,7 +9,9 @@ import frs.hotgammon.Board;
 import frs.hotgammon.Color;
 import frs.hotgammon.Game;
 import frs.hotgammon.Location;
+import frs.hotgammon.MonFactory;
 import frs.hotgammon.MoveValidator;
+import frs.hotgammon.RollDeterminer;
 import frs.hotgammon.TurnDeterminer;
 import frs.hotgammon.WinnerDeterminer;
 
@@ -33,29 +35,41 @@ import frs.hotgammon.WinnerDeterminer;
 public class GameImpl implements Game {
   private Board gameBoard;
   private Color playerInTurn;
-  private final int[][] DICE_ROLLS = { {1,2}, {3,4}, {5,6} };
-  private int diceRollIdx;
+
   private List<Integer> diceRoll;
   private int movesLeft;
   private int turns;
   private MoveValidator moveValidator;
   private WinnerDeterminer winnerDeterminer;
   private TurnDeterminer turnDeterminer;
+  private RollDeterminer diceRollDeterminer;
 
   
-  public GameImpl(MoveValidator mValidator, WinnerDeterminer wDeterminer, TurnDeterminer tDeterminer){
+  public GameImpl(MoveValidator mValidator, WinnerDeterminer wDeterminer, TurnDeterminer tDeterminer, RollDeterminer drDeterminer){
 	  mValidator.setGame(this);
 	  wDeterminer.setGame(this);
 	  tDeterminer.setGame(this);
 	  moveValidator = mValidator;
 	  winnerDeterminer = wDeterminer;
 	  turnDeterminer = tDeterminer;
+	  diceRollDeterminer = drDeterminer;
+  }
+  
+  public GameImpl(MonFactory factory){
+	  moveValidator = factory.getMoveValidator();
+	  winnerDeterminer = factory.getWinnerDeterminer();
+	  turnDeterminer = factory.getTurnDeterminer();
+	  diceRollDeterminer = factory.getRollDeterminer();
+	  
+	  moveValidator.setGame(this);
+	  winnerDeterminer.setGame(this);
+	  turnDeterminer.setGame(this);
   }
   
   public void newGame() {
 	  gameBoard = new BoardImpl();
+	  diceRollDeterminer.reset();
 	  playerInTurn = Color.NONE;
-	  diceRollIdx = 2;
 	  turns = 0;
 
 	  configure(new Placement[] {
@@ -104,11 +118,14 @@ public class GameImpl implements Game {
   public void nextTurn() {
 
 	  playerInTurn = turnDeterminer.nextTurn();
-	  diceRollIdx = ((diceRollIdx < 2) ? diceRollIdx + 1 : 0);//(diceRollIdx == -1) ? 0 : ((diceRollIdx < 2) ? diceRollIdx + 1 : 0);
+	  
+	  diceRollDeterminer.rollDice();
+	  diceRoll = new ArrayList<Integer>(Arrays.asList(diceRollDeterminer.getDiceRoll()[0], diceRollDeterminer.getDiceRoll()[1])) ;
+	  //diceRollIdx = ((diceRollIdx < 2) ? diceRollIdx + 1 : 0);//(diceRollIdx == -1) ? 0 : ((diceRollIdx < 2) ? diceRollIdx + 1 : 0);
 
 
-	  int[] diceRollArr = DICE_ROLLS[diceRollIdx];
-	  diceRoll = new ArrayList<Integer>(Arrays.asList(diceRollArr[0],diceRollArr[1]));
+	  //int[] diceRollArr = DICE_ROLLS[diceRollIdx];
+	 // diceRoll = new ArrayList<Integer>(Arrays.asList(diceRollArr[0],diceRollArr[1]));
 	  
 	  turns++;
 	  movesLeft = 2;
@@ -133,7 +150,7 @@ public class GameImpl implements Game {
   public Color getPlayerInTurn() { return playerInTurn; }
   
   public int getNumberOfMovesLeft() { return movesLeft; }
-  public int[] diceThrown() { return DICE_ROLLS[diceRollIdx]; }
+  public int[] diceThrown() { return diceRollDeterminer.getDiceRoll(); }//DICE_ROLLS[diceRollIdx]; }
   public int[] diceValuesLeft() { 
 	  int[] diceRollArr = new int[diceRoll.size()];
 	  for (int i = 0; i < diceRollArr.length; i++){

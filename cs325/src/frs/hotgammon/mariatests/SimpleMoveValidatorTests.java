@@ -13,10 +13,12 @@ import org.junit.runners.Parameterized.Parameters;
 
 import frs.hotgammon.Location;
 import frs.hotgammon.MoveValidator;
+import frs.hotgammon.RollDeterminer;
 import frs.hotgammon.TurnDeterminer;
 import frs.hotgammon.WinnerDeterminer;
 import frs.hotgammon.common.GameImpl;
 import frs.hotgammon.variants.movevalidators.SimpleMoveValidator;
+import frs.hotgammon.variants.rolldeterminers.PairSequenceDeterminer;
 import frs.hotgammon.variants.turndeterminers.AceyDeuceyTurnDeterminer;
 import frs.hotgammon.variants.turndeterminers.AlternatingTurnDeterminer;
 import frs.hotgammon.variants.winnerdeterminers.BearOffWinnerDeterminer;
@@ -27,15 +29,15 @@ public class SimpleMoveValidatorTests {
 
 	private GameImpl game;
 	
-	public SimpleMoveValidatorTests(MoveValidator mValidator, WinnerDeterminer wDeterminer, TurnDeterminer tDeterminer) {
-		game = new GameImpl(mValidator, wDeterminer, tDeterminer);
+	public SimpleMoveValidatorTests(MoveValidator validator, WinnerDeterminer winnerDeterminer, TurnDeterminer ntd, RollDeterminer rDeterminer) {
+		game = new GameImpl(validator, winnerDeterminer, ntd, rDeterminer);
 		game.newGame();		
 	}
 	
 	 @Parameters
 	 public static Collection<Object[]> data() {
-	   Object[][] data = new Object[][] { { new SimpleMoveValidator(), new SixMoveWinnerDeterminer(), new AlternatingTurnDeterminer() },
-			                              { new SimpleMoveValidator(), new BearOffWinnerDeterminer() , new AlternatingTurnDeterminer()},		                            
+	   Object[][] data = new Object[][] { { new SimpleMoveValidator(), new SixMoveWinnerDeterminer(), new AlternatingTurnDeterminer(), new PairSequenceDeterminer() },
+			                              { new SimpleMoveValidator(), new BearOffWinnerDeterminer() , new AlternatingTurnDeterminer(), new PairSequenceDeterminer()},		                            
 	   };
 	   return Arrays.asList(data);
 	 }
