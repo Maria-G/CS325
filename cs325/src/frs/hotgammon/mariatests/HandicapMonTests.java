@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import frs.hotgammon.Color;
 import frs.hotgammon.Location;
 import frs.hotgammon.MonFactory;
 import frs.hotgammon.MoveValidator;
@@ -17,6 +18,7 @@ import frs.hotgammon.RollDeterminer;
 import frs.hotgammon.TurnDeterminer;
 import frs.hotgammon.WinnerDeterminer;
 import frs.hotgammon.common.GameImpl;
+import frs.hotgammon.common.GameImpl.Placement;
 import frs.hotgammon.variants.factories.HandicapMonFactory;
 import frs.hotgammon.variants.movevalidators.SimpleMoveValidator;
 import frs.hotgammon.variants.rolldeterminers.PairSequenceDeterminer;
@@ -56,6 +58,31 @@ public class HandicapMonTests {
 		assertFalse(game.move(Location.B12, Location.B1));
 		assertFalse(game.move(Location.B12, Location.B8));
 		assertTrue(game.move(Location.B1, Location.B4));
+	}
+	
+	@Test
+	public void testAlphamonRulesForSendPieceToBarWhenBlackTurn() {
+		game.configure(new Placement[]{
+				new Placement(Color.BLACK, Location.R1),
+				new Placement(Color.RED, Location.R10),
+		});
+		game.nextTurn();
+		assertFalse(game.move(Location.R1, Location.R10));
+	}
+	 
+	@Test
+	public void testBetamonRulesForSendPieceToBarWhenRedTurn() {
+		game.configure(new Placement[]{
+				new Placement(Color.BLACK, Location.B4),
+				new Placement(Color.RED, Location.B12),
+				new Placement(Color.RED, Location.B1),
+		});
+		game.nextTurn();
+		game.nextTurn();
+		assertFalse(game.move(Location.B12, Location.B1));
+		assertFalse(game.move(Location.B12, Location.B8));
+		assertTrue(game.move(Location.B1, Location.B4));
+		assertTrue(game.getCount(Location.B_BAR) == 1);
 	}
 
 }
