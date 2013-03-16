@@ -11,6 +11,13 @@ public class PlayerDependentMoveValidator implements MoveValidator{
 	
 	private Game game;
 	
+	public PlayerDependentMoveValidator() {
+	}
+	
+	public PlayerDependentMoveValidator(Game game) {
+		this.setGame(game);
+	}
+	
 	@Override
 	public boolean isValid(Location from, Location to) {
 		Color player = this.game.getPlayerInTurn();

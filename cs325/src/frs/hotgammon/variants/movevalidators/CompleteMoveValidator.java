@@ -14,6 +14,13 @@ public class CompleteMoveValidator implements MoveValidator {
 
 	private Game game;
 	
+	public CompleteMoveValidator() {
+	}
+	
+	public CompleteMoveValidator(Game game) {
+		this.setGame(game);
+	}
+	
 	@Override
 	public boolean isValid(Location from, Location to) {
 		Color playerInTurn = game.getPlayerInTurn();		

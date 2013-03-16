@@ -13,7 +13,7 @@ public class SixMoveWinnerDeterminer implements WinnerDeterminer{
 
 	@Override
 	public void setGame(Game game) {
-		// TODO Auto-generated method stub		
+		// Do Nothing	
 	}
 
 }

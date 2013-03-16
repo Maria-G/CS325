@@ -1,5 +1,6 @@
 package frs.hotgammon.variants.factories;
 
+import frs.hotgammon.Game;
 import frs.hotgammon.MonFactory;
 import frs.hotgammon.MoveValidator;
 import frs.hotgammon.RollDeterminer;
@@ -11,25 +12,32 @@ import frs.hotgammon.variants.turndeterminers.AlternatingTurnDeterminer;
 import frs.hotgammon.variants.winnerdeterminers.SixMoveWinnerDeterminer;
 
 public class EpsilonMonFactory implements MonFactory {
-	   
+	  
+	private Game game;
+		
 	@Override
-	public MoveValidator getMoveValidator() {
-		return new SimpleMoveValidator();
+	public MoveValidator createMoveValidator() {
+		return new SimpleMoveValidator(game);
 	}
 
 	@Override
-	public TurnDeterminer getTurnDeterminer() {
-		return new AlternatingTurnDeterminer();
+	public TurnDeterminer createTurnDeterminer() {
+		return new AlternatingTurnDeterminer(game);
 	}
 
 	@Override
-	public WinnerDeterminer getWinnerDeterminer() {
+	public WinnerDeterminer createWinnerDeterminer() {
 		return new SixMoveWinnerDeterminer();
 	}
 
 	@Override
-	public RollDeterminer getRollDeterminer() {
+	public RollDeterminer createRollDeterminer() {
 		return new RandomRollDeterminer();
+	}
+
+	@Override
+	public void setGame(Game game) {
+		this.game = game;
 	}
 
 }

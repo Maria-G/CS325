@@ -56,14 +56,12 @@ public class GameImpl implements Game {
   }
   
   public GameImpl(MonFactory factory){
-	  moveValidator = factory.getMoveValidator();
-	  winnerDeterminer = factory.getWinnerDeterminer();
-	  turnDeterminer = factory.getTurnDeterminer();
-	  diceRollDeterminer = factory.getRollDeterminer();
+	  factory.setGame(this);
+	  moveValidator = factory.createMoveValidator();
+	  winnerDeterminer = factory.createWinnerDeterminer();
+	  turnDeterminer = factory.createTurnDeterminer();
+	  diceRollDeterminer = factory.createRollDeterminer();
 	  
-	  moveValidator.setGame(this);
-	  winnerDeterminer.setGame(this);
-	  turnDeterminer.setGame(this);
   }
   
   public void newGame() {

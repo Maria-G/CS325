@@ -9,6 +9,13 @@ public class BearOffWinnerDeterminer implements WinnerDeterminer{
 
 	private Game game;
 	
+	public BearOffWinnerDeterminer(){
+	}
+	
+	public BearOffWinnerDeterminer(Game game){
+		this.setGame(game);
+	}
+	
 	@Override
 	public Color winner(int turnCount) {
 		Color playerInTurn = (this.game.getPlayerInTurn() == Color.NONE) ? Color.BLACK : this.game.getPlayerInTurn();

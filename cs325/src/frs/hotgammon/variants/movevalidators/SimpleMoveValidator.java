@@ -9,6 +9,10 @@ public class SimpleMoveValidator implements MoveValidator{
 	public SimpleMoveValidator(){
 	}
 	
+	public SimpleMoveValidator(Game game) {
+		this.setGame(game);
+	}
+
 	@Override
 	public boolean isValid(Location from, Location to) {
 		int fromCount = game.getCount(from);

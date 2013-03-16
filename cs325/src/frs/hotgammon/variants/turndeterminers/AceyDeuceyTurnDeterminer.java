@@ -8,6 +8,13 @@ public class AceyDeuceyTurnDeterminer implements TurnDeterminer{
 
 	private Game game;
 	
+	public AceyDeuceyTurnDeterminer(){
+	}
+	
+	public AceyDeuceyTurnDeterminer(Game game){
+		this.setGame(game);
+	}
+	
 	@Override
 	public Color nextTurn() {
 		if (this.game.diceThrown()[0] == 1 && this.game.diceThrown()[1] == 2){
