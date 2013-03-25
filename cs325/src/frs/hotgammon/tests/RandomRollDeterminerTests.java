@@ -13,14 +13,16 @@ import org.junit.runners.Parameterized.Parameters;
 import frs.hotgammon.MonFactory;
 import frs.hotgammon.common.GameImpl;
 import frs.hotgammon.tests.stubs.Fixed_BlackStarts_EpsilonMonFactory;
+import frs.hotgammon.tests.stubs.Fixed_BlackStarts_SemiMonFactory;
 import frs.hotgammon.tests.stubs.Fixed_RedStarts_EpsilonMonFactory;
+import frs.hotgammon.tests.stubs.Fixed_RedStarts_SemiMonFactory;
 
 @RunWith(value = Parameterized.class)
-public class EpsilonMonCoreTests {
+public class RandomRollDeterminerTests {
 	
 	private GameImpl game;
 
-	public EpsilonMonCoreTests(MonFactory factory){
+	public RandomRollDeterminerTests(MonFactory factory){
 		game = new GameImpl(factory);
 		game.newGame();			
 	}
@@ -29,7 +31,9 @@ public class EpsilonMonCoreTests {
 	 public static Collection<MonFactory[]> data() {
 		   MonFactory[][] data = new MonFactory[][] { 
 			   {new Fixed_BlackStarts_EpsilonMonFactory()},
-			   {new Fixed_RedStarts_EpsilonMonFactory()},			   			   
+			   {new Fixed_RedStarts_EpsilonMonFactory()},
+			   {new Fixed_BlackStarts_SemiMonFactory()},
+			   {new Fixed_RedStarts_SemiMonFactory()},			   			   
 		   };
 		   return Arrays.asList(data); 
 	 }

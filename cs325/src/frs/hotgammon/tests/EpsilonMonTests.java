@@ -5,6 +5,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({EpsilonMonCoreTests.class, RedStartsEpsilonMonTests.class, BlackStartsEpsilonMonTests.class } )
+@SuiteClasses({RedStartsEpsilonMonTests.class, BlackStartsEpsilonMonTests.class } )
 public class EpsilonMonTests {
 }

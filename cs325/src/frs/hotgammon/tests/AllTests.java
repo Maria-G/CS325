@@ -12,6 +12,6 @@ import frs.hotgammon.tests.mariatests.PairSequenceDeterminerTests;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({EpsilonMonTests.class, HandicapMonTests.class, FactoryCoreTests.class, PairSequenceDeterminerTests.class, CoreTests.class,  AlternatingTurnTests.class, WinAfterSixTests.class, BetaMonTests.class, GammaMonTests.class, DeltaMonTests.class, BoardTests.class, LocationTests.class } )
+@SuiteClasses({SemiMonTests.class, RandomRollDeterminerTests.class, EpsilonMonTests.class, HandicapMonTests.class, FactoryCoreTests.class, PairSequenceDeterminerTests.class, CoreTests.class,  AlternatingTurnTests.class, WinAfterSixTests.class, BetaMonTests.class, GammaMonTests.class, DeltaMonTests.class, BoardTests.class, LocationTests.class } )
 public class AllTests {
 }
