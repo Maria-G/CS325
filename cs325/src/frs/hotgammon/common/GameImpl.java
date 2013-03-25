@@ -1,6 +1,5 @@
 package frs.hotgammon.common;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,12 +55,15 @@ public class GameImpl implements Game {
   }
   
   public GameImpl(MonFactory factory){
+	  setFactory(factory);
+  }
+  
+  public void setFactory(MonFactory factory){
 	  factory.setGame(this);
 	  moveValidator = factory.createMoveValidator();
 	  winnerDeterminer = factory.createWinnerDeterminer();
 	  turnDeterminer = factory.createTurnDeterminer();
 	  diceRollDeterminer = factory.createRollDeterminer();
-	  
   }
   
   public void newGame() {
@@ -117,16 +119,28 @@ public class GameImpl implements Game {
 
 	  playerInTurn = turnDeterminer.nextTurn();
 	  
+	  //Roll Dice
 	  diceRollDeterminer.rollDice();
-	  diceRoll = new ArrayList<Integer>(Arrays.asList(diceRollDeterminer.getDiceRoll()[0], diceRollDeterminer.getDiceRoll()[1])) ;
-	  //diceRollIdx = ((diceRollIdx < 2) ? diceRollIdx + 1 : 0);//(diceRollIdx == -1) ? 0 : ((diceRollIdx < 2) ? diceRollIdx + 1 : 0);
-
-
-	  //int[] diceRollArr = DICE_ROLLS[diceRollIdx];
-	 // diceRoll = new ArrayList<Integer>(Arrays.asList(diceRollArr[0],diceRollArr[1]));
+	  int[] dRoll = diceRollDeterminer.getDiceRoll();
+	  
+	  if(turns == 0){
+		  while(dRoll.length > 2){
+			  diceRollDeterminer.rollDice();
+			  dRoll = diceRollDeterminer.getDiceRoll();
+		  }
+		  playerInTurn = (dRoll[0] > dRoll[1]) ? Color.RED : Color.BLACK;		  
+	  }
+	  
+	  //Create diceRoll 
+	  if(dRoll.length == 2){
+		  diceRoll = new ArrayList<Integer>(Arrays.asList(dRoll[0], dRoll[1])) ;
+	  }
+	  else{
+		  diceRoll = new ArrayList<Integer>(Arrays.asList(dRoll[0], dRoll[1], dRoll[2], dRoll[3])) ;
+	  }
 	  
 	  turns++;
-	  movesLeft = 2;
+	  movesLeft = diceRoll.size();
   }
   public boolean move(Location from, Location to) { 
 	  if (movesLeft == 0){

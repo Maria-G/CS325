@@ -1,4 +1,4 @@
-package frs.hotgammon.tests;
+package frs.hotgammon.tests.mariatests;
 
 import static org.junit.Assert.*;
 
@@ -13,10 +13,6 @@ import org.junit.runners.Parameterized.Parameters;
 import frs.hotgammon.Color;
 import frs.hotgammon.Location;
 import frs.hotgammon.MonFactory;
-import frs.hotgammon.MoveValidator;
-import frs.hotgammon.RollDeterminer;
-import frs.hotgammon.TurnDeterminer;
-import frs.hotgammon.WinnerDeterminer;
 import frs.hotgammon.common.GameImpl;
 import frs.hotgammon.common.GameImpl.Placement;
 import frs.hotgammon.variants.factories.AlphaMonFactory;
@@ -25,14 +21,6 @@ import frs.hotgammon.variants.factories.DeltaMonFactory;
 import frs.hotgammon.variants.factories.EpsilonMonFactory;
 import frs.hotgammon.variants.factories.GammaMonFactory;
 import frs.hotgammon.variants.factories.HandicapMonFactory;
-import frs.hotgammon.variants.movevalidators.CompleteMoveValidator;
-import frs.hotgammon.variants.movevalidators.SimpleMoveValidator;
-import frs.hotgammon.variants.rolldeterminers.PairSequenceDeterminer;
-import frs.hotgammon.variants.rolldeterminers.RandomRollDeterminer;
-import frs.hotgammon.variants.turndeterminers.AceyDeuceyTurnDeterminer;
-import frs.hotgammon.variants.turndeterminers.AlternatingTurnDeterminer;
-import frs.hotgammon.variants.winnerdeterminers.BearOffWinnerDeterminer;
-import frs.hotgammon.variants.winnerdeterminers.SixMoveWinnerDeterminer;
 
 @RunWith(value = Parameterized.class)
 public class FactoryCoreTests {
@@ -60,7 +48,7 @@ public class FactoryCoreTests {
 			   {new EpsilonMonFactory()},
 			   // ZetaMon -- Identical to AlphaMon with DIFFERENT STARTING POSITION (p434)
 			   //{ new SimpleMoveValidator(), new SixMoveWinnerDeterminer() , new AceyDeuceyTurnDeterminer()},
-			   // HandicapMon?
+			   // HandicapMon
 			   {new HandicapMonFactory()},
 				   			   
 		   };
@@ -72,8 +60,7 @@ public class FactoryCoreTests {
 			assertEquals(Color.NONE, game.getPlayerInTurn());
 		}
 
-	
-
+		
 
 		@Test
 		public void shoudlBeTwoBlackCheckersOnR1() {
@@ -82,6 +69,12 @@ public class FactoryCoreTests {
 		}
 
 		
+
+
+	
+
+	
+
 
 	
 
@@ -95,13 +88,15 @@ public class FactoryCoreTests {
 			assertEquals(CHECKERS_ON_R1_AT_START, game.getCount(Location.R1));
 		}
 
+
 	
 
 
 
 
-
-
+	
+	
+		
 		@Test
 		public void shouldReturnProperCountForGivenSquare() {
 			game.nextTurn();
@@ -120,12 +115,14 @@ public class FactoryCoreTests {
 			assertTrue(game.getColor(Location.R1) == Color.BLACK);
 		}
 
+	
+
 		
 
 	
 
-	
 
+	
 
 		/*
 		 * @Test public void redShouldBeWinnerAfter6Turns() { game.nextTurn();
@@ -134,14 +131,13 @@ public class FactoryCoreTests {
 		 * game.nextTurn(); assertTrue(game.winner() == Color.RED); }
 		 */
 
-		@Test
-		public void shouldNotBeAbleToMoveFromASpotWithoutCheckers() {
-			game.nextTurn();
-			assertFalse(game.move(Location.R2, Location.R3));
-		}
-		// Joe's Test
-	
 
+
+
+		// Joe's Test
+
+
+	
 
 		/*
 		 * This test is wrong.
@@ -227,16 +223,15 @@ public class FactoryCoreTests {
 
 	
 
-		
-
-
-
+	
 		
 
 		@Test
 		public void shouldHaveNoPlayerInTurnBeforeTheGameStarted() {
 			assertTrue(game.getPlayerInTurn() == Color.NONE);
 		}
+
+
 
 
 
@@ -256,8 +251,10 @@ public class FactoryCoreTests {
 			assertTrue(game.getColor(Location.B1) == Color.RED);
 		}
 
-		
+	
 
+
+		
 
 
 

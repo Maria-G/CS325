@@ -1,4 +1,4 @@
-package frs.hotgammon.mariatests;
+package frs.hotgammon.tests.mariatests;
 import org.junit.*;
 
 import frs.hotgammon.Color;

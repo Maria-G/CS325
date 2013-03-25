@@ -1,4 +1,4 @@
-package frs.hotgammon.mariatests;
+package frs.hotgammon.tests.mariatests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
