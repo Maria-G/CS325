@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-import frs.hotgammon.Color;
+import frs.hotgammon.framework.Color;
 import frs.hotgammon.common.GameImpl;
 
 import frs.hotgammon.variants.movevalidators.SimpleMoveValidator;
@@ -32,7 +32,7 @@ public class DeltaMonTests {
 		game.nextTurn();
 		assertEquals(Color.BLACK, game.getPlayerInTurn());
 		game.nextTurn();
-		assertEquals(Color.BLACK,  game.getPlayerInTurn()); 
+		assertEquals(Color.BLACK,  game.getPlayerInTurn());
 		game.nextTurn();
 		assertEquals(Color.RED,  game.getPlayerInTurn());
 	}

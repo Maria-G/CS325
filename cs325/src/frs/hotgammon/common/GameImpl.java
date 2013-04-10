@@ -5,14 +5,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import frs.hotgammon.Board;
-import frs.hotgammon.Color;
-import frs.hotgammon.Game;
-import frs.hotgammon.Location;
 import frs.hotgammon.MonFactory;
 import frs.hotgammon.MoveValidator;
 import frs.hotgammon.RollDeterminer;
 import frs.hotgammon.TurnDeterminer;
 import frs.hotgammon.WinnerDeterminer;
+import frs.hotgammon.framework.Color;
+import frs.hotgammon.framework.Game;
+import frs.hotgammon.framework.GameObserver;
+import frs.hotgammon.framework.Location;
 
 /** Skeleton implementation of HotGammon.
  
@@ -213,6 +214,12 @@ public class GameImpl implements Game {
 	        gameBoard.place(placements[i].player, placements[i].location.ordinal());
 	        
 	    }
+	}
+
+	@Override
+	public void addObserver(GameObserver observer) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

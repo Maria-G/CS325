@@ -1,5 +1,8 @@
 package frs.hotgammon;
 
+import frs.hotgammon.framework.Color;
+import frs.hotgammon.framework.Location;
+
 public interface Board {
 
 	public abstract boolean move(Location from, Location to, Color playerInTurn);

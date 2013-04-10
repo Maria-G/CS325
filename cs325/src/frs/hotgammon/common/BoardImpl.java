@@ -1,8 +1,8 @@
 package frs.hotgammon.common;
 
 import frs.hotgammon.Board;
-import frs.hotgammon.Color;
-import frs.hotgammon.Location;
+import frs.hotgammon.framework.Color;
+import frs.hotgammon.framework.Location;
 
 
 

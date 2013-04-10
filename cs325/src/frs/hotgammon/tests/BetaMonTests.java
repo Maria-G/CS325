@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import frs.hotgammon.Color;
-import frs.hotgammon.Location;
+import frs.hotgammon.framework.Color;
+import frs.hotgammon.framework.Location;
 import frs.hotgammon.common.GameImpl;
 import frs.hotgammon.variants.movevalidators.CompleteMoveValidator;
 import frs.hotgammon.variants.rolldeterminers.PairSequenceDeterminer;
@@ -79,6 +79,7 @@ public class BetaMonTests {
 	
 	@Test 
 	public void shouldSendRedBlotToBar() {
+		game.configure( null);
 		game.configure( new GameImpl.Placement[] {
 				new GameImpl.Placement(Color.BLACK, Location.R1),
 				new GameImpl.Placement(Color.RED, Location.R2)

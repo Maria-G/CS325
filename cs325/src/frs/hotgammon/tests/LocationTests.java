@@ -1,8 +1,8 @@
 package frs.hotgammon.tests;
 import org.junit.*;
 
-import frs.hotgammon.Color;
-import frs.hotgammon.Location;
+import frs.hotgammon.framework.Color;
+import frs.hotgammon.framework.Location;
 
 import static org.junit.Assert.*;
 

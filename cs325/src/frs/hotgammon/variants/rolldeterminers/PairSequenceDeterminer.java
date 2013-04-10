@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import frs.hotgammon.Game;
 import frs.hotgammon.RollDeterminer;
+import frs.hotgammon.framework.Game;
 
 public class PairSequenceDeterminer implements RollDeterminer{
 

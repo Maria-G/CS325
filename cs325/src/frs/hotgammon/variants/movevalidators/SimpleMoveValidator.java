@@ -1,6 +1,9 @@
 package frs.hotgammon.variants.movevalidators;
 
 import frs.hotgammon.*;
+import frs.hotgammon.framework.Color;
+import frs.hotgammon.framework.Game;
+import frs.hotgammon.framework.Location;
 
 public class SimpleMoveValidator implements MoveValidator{
 

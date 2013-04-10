@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import frs.hotgammon.Color;
-import frs.hotgammon.Game;
-import frs.hotgammon.Location;
 import frs.hotgammon.MoveValidator;
+import frs.hotgammon.framework.Color;
+import frs.hotgammon.framework.Game;
+import frs.hotgammon.framework.Location;
 
 public class CompleteMoveValidator implements MoveValidator {
 

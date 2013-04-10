@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import frs.hotgammon.Color;
+import frs.hotgammon.framework.Color;
 import frs.hotgammon.MoveValidator;
 import frs.hotgammon.RollDeterminer;
 import frs.hotgammon.TurnDeterminer;
@@ -41,8 +41,8 @@ public class WinAfterSixTests {
 	   };
 	   return Arrays.asList(data);
 	 }
-/*
-	@Before
+
+	/**@Before
 	public void setup() { 
 		game = new GameImpl(new CompleteMoveValidator(), new SixMoveWinnerDeterminer(), new AlternatingTurnDeterminer());
 		game.newGame();

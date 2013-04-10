@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import frs.hotgammon.Color;
-import frs.hotgammon.Location;
+import frs.hotgammon.framework.Color;
+import frs.hotgammon.framework.Location;
 import frs.hotgammon.common.GameImpl;
 import frs.hotgammon.variants.movevalidators.SimpleMoveValidator;
 import frs.hotgammon.variants.rolldeterminers.PairSequenceDeterminer;
@@ -26,6 +26,7 @@ public class GammaMonTests {
 				new PairSequenceDeterminer());
 		game.newGame();
 	}
+
 
 	@Test
 	public void shouldBeWinForBlack() {

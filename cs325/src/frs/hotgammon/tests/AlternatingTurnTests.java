@@ -10,8 +10,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import frs.hotgammon.Color;
-import frs.hotgammon.Location;
+import frs.hotgammon.framework.Color;
+import frs.hotgammon.framework.Location;
 import frs.hotgammon.MoveValidator;
 import frs.hotgammon.RollDeterminer;
 import frs.hotgammon.TurnDeterminer;
@@ -48,6 +48,7 @@ public class AlternatingTurnTests {
 	 }
 		@Test
 		public void shouldBeAbleToRemovePlayerOfRightColor() {
+			game.configure(null);
 			game.configure(new Placement[] {
 					new Placement(Color.RED, Location.B1)
 			
@@ -96,6 +97,7 @@ public class AlternatingTurnTests {
 	
 	@Test
 	public void redShouldBeAbleToMove() {
+		game.configure(null);
 		game.configure(new Placement[] {
 				new Placement(Color.RED, Location.B1)
 		});
@@ -128,6 +130,7 @@ public class AlternatingTurnTests {
 	
 	@Test
 	public void shouldNotBeAbleToMakeThreeMoves() {
+		game.configure(null);
 		game.configure(new GameImpl.Placement[] {
 				 new GameImpl.Placement(Color.RED, Location.R7),
 				 new GameImpl.Placement(Color.RED, Location.R6),
