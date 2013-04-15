@@ -1,5 +1,7 @@
 package frs.hotgammon.tests.stub;
 
+import java.util.ArrayList;
+
 import frs.hotgammon.framework.*;
 
 /** A testing stub for visual testing of
@@ -24,6 +26,8 @@ public class StubGame1 implements Game {
     newGame();
   }
 
+  ArrayList<GameObserver> observers = new ArrayList<GameObserver>();
+  
   // Here I only have one red and one
   // black checker on the board!
   Location loneRiderHere1, loneRiderHere2;
@@ -48,6 +52,11 @@ public class StubGame1 implements Game {
     movesLeft = 2;
     tictac = !tictac;
     System.out.println("nextTurn: " + turn);
+    
+  //Notify Observers
+	  for( GameObserver gO : this.observers ){
+		  gO.diceRolled(diceThrown());
+	  }
   }
 
   /** for testing purposes location B3 and R3 are
@@ -63,9 +72,17 @@ public class StubGame1 implements Game {
       }
     } else {
       System.out.println("GAME: Moving to B3/R3 is illegal (testing purposes)");
+    //Notify Observers
+	  for( GameObserver gO : this.observers ){
+		  gO.checkerMove(from, from);
+	  }
       return false;
     }
     movesLeft--;
+    //Notify Observers
+	  for( GameObserver gO : this.observers ){
+		  gO.checkerMove(from, to);
+	  }
     return true;
   }
 
@@ -122,5 +139,7 @@ public class StubGame1 implements Game {
     return sum;
   }
 
-  public void addObserver(GameObserver gl) { }
+  public void addObserver(GameObserver gl) { 
+	  this.observers.add(gl);
+  }
 }

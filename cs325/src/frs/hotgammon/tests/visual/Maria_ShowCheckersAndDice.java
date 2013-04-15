@@ -3,8 +3,12 @@ package frs.hotgammon.tests.visual;
 import minidraw.standard.*;
 import minidraw.framework.*;
 
-import java.awt.*;
 import javax.swing.*;
+import frs.hotgammon.common.GameImpl;
+import frs.hotgammon.framework.Game;
+import frs.hotgammon.variants.factories.AlphaMonFactory;
+import frs.hotgammon.view.HotGammonDrawing;
+import frs.hotgammon.view.HotGammonTool;
 
 /** Show the dice and some checkers on the
  * backgammon board.  
@@ -23,30 +27,32 @@ import javax.swing.*;
    distribute it for non-commercial purposes. For any 
    commercial use, see http://www.baerbak.com/
  */
-public class ShowCheckersAndDice {
+public class Maria_ShowCheckersAndDice {
   
   public static void main(String[] args) {
     DrawingEditor editor = 
       new MiniDrawApplication( "Show HotGammon figures...",  
-                               new FirstHotGammonFactory() );
+                               new HotGammonFactory() );
     editor.open();
-
-    Figure redDie = new ImageFigure("die4", new Point(216, 202));
-    Figure blackDie = new ImageFigure("die2", new Point(306, 202));
-    editor.drawing().add(redDie);
-    editor.drawing().add(blackDie);
     
-    Figure bc = new ImageFigure("blackchecker", new Point(21,21));
-    editor.drawing().add(bc);
-    Figure rc = new ImageFigure("redchecker", new Point(507,390));
-    editor.drawing().add(rc);
-
-    editor.setTool( new SelectionTool(editor) );
+    int redDie = 4;
+    int blackDie = 2;
+    ((HotGammonDrawing) editor.drawing()).addDie(redDie);
+    ((HotGammonDrawing) editor.drawing()).addDie(blackDie);
+    
+    Game game = new GameImpl(new AlphaMonFactory());//new StubGame1();//new DeltaMonFactory()
+    game.addObserver((HotGammonDrawing)editor.drawing());
+    ((HotGammonDrawing) editor.drawing()).setGame(game);
+    
+    game.newGame();
+    game.nextTurn();
+    editor.setTool( 
+    		new HotGammonTool(editor,game) );//new MoveTool(editor, game) );//new DieRollTool(editor, game) );
 
   }
 }
 
-class FirstHotGammonFactory implements Factory {
+class HotGammonFactory implements Factory {
   public DrawingView createDrawingView( DrawingEditor editor ) {
     DrawingView view = 
       new StdViewWithBackground(editor, "board");
@@ -54,7 +60,7 @@ class FirstHotGammonFactory implements Factory {
   }
 
   public Drawing createDrawing( DrawingEditor editor ) {
-    return new StandardDrawing();
+    return new HotGammonDrawing();
   }
 
   public JTextField createStatusField( DrawingEditor editor ) {

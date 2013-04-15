@@ -15,22 +15,7 @@ import frs.hotgammon.framework.Game;
 import frs.hotgammon.framework.GameObserver;
 import frs.hotgammon.framework.Location;
 
-/** Skeleton implementation of HotGammon.
- 
-   This source code is from the book 
-     "Flexible, Reliable Software:
-       Using Patterns and Agile Development"
-     published 2010 by CRC Press.
-   Author: 
-     Henrik B Christensen 
-     Computer Science Department
-     Aarhus University
-   
-   This source code is provided WITHOUT ANY WARRANTY either 
-   expressed or implied. You may study, use, modify, and 
-   distribute it for non-commercial purposes. For any 
-   commercial use, see http://www.baerbak.com/
-*/
+
 
 public class GameImpl implements Game {
   private Board gameBoard;
@@ -43,6 +28,7 @@ public class GameImpl implements Game {
   private WinnerDeterminer winnerDeterminer;
   private TurnDeterminer turnDeterminer;
   private RollDeterminer diceRollDeterminer;
+  private ArrayList<GameObserver> observers = new ArrayList<GameObserver>();
 
   
   public GameImpl(MoveValidator mValidator, WinnerDeterminer wDeterminer, TurnDeterminer tDeterminer, RollDeterminer drDeterminer){
@@ -142,20 +128,50 @@ public class GameImpl implements Game {
 	  
 	  turns++;
 	  movesLeft = diceRoll.size();
+	  
+	  //Notify Observers
+	  for( GameObserver gO : this.observers ){
+		  gO.diceRolled(diceThrown());
+	  }
+	  
   }
   public boolean move(Location from, Location to) { 
+	  ///
+	  if(from == Location.R_BEAR_OFF || from == Location.B_BEAR_OFF){
+		  Color checkerColor = (from == Location.R_BEAR_OFF) ? Color.RED : Color.BLACK;
+		  gameBoard.move(from, to, checkerColor);
+		//Notify Observers
+		  for( GameObserver gO : this.observers ){
+			  System.out.println("told observers to move from bear off.  ");
+			  gO.checkerMove(from, to);
+		  }
+		  return true;
+	  }
+	  ///
+	  System.out.println("inside move  ");
 	  if (movesLeft == 0){
+		  System.out.println("movesLeft == 0");
 		  return false;
 	  }
 	  if (moveValidator.isValid(from, to)){
+		  System.out.println("moveValidator.isValid(from, to) == true");
+		  
 		  if(gameBoard.getCountAt(to) == 1 && gameBoard.getColorAt(to) != playerInTurn){
 			  moveOpponentToBar(to);
 		  }
 		  boolean moveValue = gameBoard.move(from, to, playerInTurn);
 		  movesLeft--;
 		  removeDiceValueUsed(from, to);
+		  if(moveValue == true){
+			  //Notify Observers
+			  for( GameObserver gO : this.observers ){
+				  System.out.println("told observers to move.  " + moveValue);
+				  gO.checkerMove(from, to);
+			  }
+		  }
 		  return moveValue;
 	  }
+	  System.out.println("moveValidator.isValid(from, to) == false");
 	  return false;
 	  
   }
@@ -189,6 +205,12 @@ public class GameImpl implements Game {
 	  Location otherPlayerBar = (colorOfOpponent == Color.BLACK) ? Location.B_BAR : Location.R_BAR;
 	  gameBoard.place(colorOfOpponent, otherPlayerBar.ordinal());
 	  gameBoard.remove(colorOfOpponent, opponentLoc.ordinal());
+	  
+	//Notify Observers
+	  for( GameObserver gO : this.observers ){
+		  System.out.println("told observers to move opponent to bar");
+		  gO.checkerMove(opponentLoc, otherPlayerBar);
+	  }
   
   }
   
@@ -211,15 +233,20 @@ public class GameImpl implements Game {
 	public void configure(Placement[] placements) {
 		gameBoard = new BoardImpl();
 	    for (int i = 0; i < placements.length; i++) {
-	        gameBoard.place(placements[i].player, placements[i].location.ordinal());
-	        
+	        //gameBoard.place(placements[i].player, placements[i].location.ordinal());	
+	    	Location from = getPlayerBearOff(placements[i].player);
+	    	gameBoard.place(placements[i].player, from.ordinal());
+	        move(from, placements[i].location);	        
 	    }
+	}
+	
+	private Location getPlayerBearOff(Color player){
+		return ( player == Color.BLACK) ? Location.B_BEAR_OFF : Location.R_BEAR_OFF;
 	}
 
 	@Override
 	public void addObserver(GameObserver observer) {
-		// TODO Auto-generated method stub
-		
+		this.observers.add(observer);		
 	}
 }
 
