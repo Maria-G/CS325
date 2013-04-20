@@ -148,7 +148,6 @@ public class GameImpl implements Game {
 		  gameBoard.move(from, to, checkerColor);
 		//Notify Observers
 		  for( GameObserver gO : this.observers ){
-			  System.out.println("told observers to move from bear off.  ");
 			  gO.checkerMove(from, to);
 		  }
 		  return true;
