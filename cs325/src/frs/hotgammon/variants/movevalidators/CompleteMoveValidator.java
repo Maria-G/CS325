@@ -8,6 +8,7 @@ import java.util.List;
 import frs.hotgammon.MoveValidator;
 import frs.hotgammon.framework.Color;
 import frs.hotgammon.framework.Game;
+import frs.hotgammon.framework.GameObserver;
 import frs.hotgammon.framework.Location;
 
 public class CompleteMoveValidator implements MoveValidator {
@@ -30,13 +31,33 @@ public class CompleteMoveValidator implements MoveValidator {
 		
 		//Common
 		if ( !containsPlayerPiece(playerInTurn, from) ){//Can't move opponent's piece
+
+			//Notify Observers
+			  for( GameObserver gO : this.game.getObservers() ){
+				  gO.setStatus("Invalid Move: Can not move opponent's piece. " + this.game.getPlayerInTurn().toString() + " has " + this.game.getNumberOfMovesLeft() + " moves left...");
+			  }
+			//
+			  
 			return false;
 		}
 		if ( isEmpty(from) ){ //Can't move piece if no pieces
+
+			//Notify Observers
+			  for( GameObserver gO : this.game.getObservers() ){
+				  gO.setStatus("Invalid Move: Can not move from an empty location. " + this.game.getPlayerInTurn().toString() + " has " + this.game.getNumberOfMovesLeft() + " moves left...");
+			  }
+			//
+			  
 			return false;
 		}
 		if ( isLocationOccupiedByOpponent(playerInTurn, to)){// //toSquare can no be occupied by >1 opponent pieces
 
+			//Notify Observers
+			  for( GameObserver gO : this.game.getObservers() ){
+				  gO.setStatus("Invalid Move: Can not move to an occupied location. " + this.game.getPlayerInTurn().toString() + " has " + this.game.getNumberOfMovesLeft() + " moves left...");
+			  }
+			//
+			  
 			  return false;				
 		}
 		
@@ -44,6 +65,13 @@ public class CompleteMoveValidator implements MoveValidator {
 		if ( !isBarEmpty(playerInTurn) ){ 
 			//If piece on bar, must move piece from bar.
 			if ( from != getBar(playerInTurn) || getOpponentInnerTable(playerInTurn).indexOf(to) < 0 ){
+
+				//Notify Observers
+				  for( GameObserver gO : this.game.getObservers() ){
+					  gO.setStatus("Invalid Move: Must move piece from Bar to opponent's inner table first. " + this.game.getPlayerInTurn().toString() + " has " + this.game.getNumberOfMovesLeft() + " moves left...");
+				  }
+				//
+				  
 				return false;
 			}
 		}
@@ -51,6 +79,13 @@ public class CompleteMoveValidator implements MoveValidator {
 			if( areAllPiecesInPlayerInnerTable(playerInTurn) ){
 				//Is the move valid with die rolls?, if not, is there a valid move? if not, is move value < die roll, if is true, if not false.
 				if (!isMovingTowardsInnerTable(distanceTravelledWithDirection)){//Can only move towards player's inner table
+
+					//Notify Observers
+					  for( GameObserver gO : this.game.getObservers() ){
+						  gO.setStatus("Invalid Move: Can not move to opponent's bear off. " + this.game.getPlayerInTurn().toString() + " has " + this.game.getNumberOfMovesLeft() + " moves left...");
+					  }
+					//
+					  
 					return false;
 				}
 				if ( !isValidDiceValue(distanceTravelledWithDirection) ){//Can only move if there is a corresponding dice value in roll
@@ -62,13 +97,34 @@ public class CompleteMoveValidator implements MoveValidator {
 					return true;
 				}
 			}
+
+			//Notify Observers
+			  for( GameObserver gO : this.game.getObservers() ){
+				  gO.setStatus("Invalid Move: Can not move to bear off with pieces outside inner table. " + this.game.getPlayerInTurn().toString() + " has " + this.game.getNumberOfMovesLeft() + " moves left...");
+			  }
+			//
+			  
 			return false;
 		}
 		else{			
 			if ( !isValidDiceValue(distanceTravelledWithDirection) ){//diceValuesLeft.indexOf(distanceTravelledWithDirection) < 0 ){ //Can only move if there is a corresponding dice value in roll
+
+				//Notify Observers
+				  for( GameObserver gO : this.game.getObservers() ){
+					  gO.setStatus("Invalid Move: Can not travel distance that is not equal to an unused dice value. " + this.game.getPlayerInTurn().toString() + " has " + this.game.getNumberOfMovesLeft() + " moves left...");
+				  }
+				//
+				  
 				return false;
 			}
 			if (!isMovingTowardsInnerTable(distanceTravelledWithDirection)){//distanceTravelledWithDirection < 0){//Can only move towards player's inner table
+
+				//Notify Observers
+				  for( GameObserver gO : this.game.getObservers() ){
+					  gO.setStatus("Invalid Move: Can not travel away from inner table. " + this.game.getPlayerInTurn().toString() + " has " + this.game.getNumberOfMovesLeft() + " moves left...");
+				  }
+				//
+				  
 				return false;
 			}
 

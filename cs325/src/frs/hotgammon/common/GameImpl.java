@@ -115,7 +115,7 @@ public class GameImpl implements Game {
 			  diceRollDeterminer.rollDice();
 			  dRoll = diceRollDeterminer.getDiceRoll();
 		  }
-		  playerInTurn = (dRoll[0] > dRoll[1]) ? Color.RED : Color.BLACK;		  
+		  playerInTurn = determineStartingPlayer(dRoll);		  
 	  }
 	  
 	  //Create diceRoll 
@@ -132,12 +132,18 @@ public class GameImpl implements Game {
 	  //Notify Observers
 	  for( GameObserver gO : this.observers ){
 		  gO.diceRolled(diceThrown());
+		  gO.setStatus(getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
 	  }
 	  
   }
+  
+  private Color determineStartingPlayer(int[] dRoll){
+	  return (dRoll[0] > dRoll[1]) ? Color.RED : Color.BLACK;
+  }
+  
   public boolean move(Location from, Location to) { 
-	  ///
-	  if(from == Location.R_BEAR_OFF || from == Location.B_BEAR_OFF){
+	  ///If from BearOff During Configure call, allow
+	  if((from == Location.R_BEAR_OFF || from == Location.B_BEAR_OFF) && turns == 0){
 		  Color checkerColor = (from == Location.R_BEAR_OFF) ? Color.RED : Color.BLACK;
 		  gameBoard.move(from, to, checkerColor);
 		//Notify Observers
@@ -148,30 +154,44 @@ public class GameImpl implements Game {
 		  return true;
 	  }
 	  ///
-	  System.out.println("inside move  ");
 	  if (movesLeft == 0){
-		  System.out.println("movesLeft == 0");
+		//Notify Observers
+		  for( GameObserver gO : this.observers ){
+			  gO.checkerMove(from, from);
+			  gO.setStatus("Invalid Move: " + getPlayerInTurn().toString() + " has 0 moves left...");
+		  }
+		//
 		  return false;
 	  }
 	  if (moveValidator.isValid(from, to)){
-		  System.out.println("moveValidator.isValid(from, to) == true");
 		  
 		  if(gameBoard.getCountAt(to) == 1 && gameBoard.getColorAt(to) != playerInTurn){
 			  moveOpponentToBar(to);
 		  }
 		  boolean moveValue = gameBoard.move(from, to, playerInTurn);
-		  movesLeft--;
-		  removeDiceValueUsed(from, to);
+		  
 		  if(moveValue == true){
+			  movesLeft--;
+			  
+			  removeDiceValueUsed(from, to);
+			  
 			  //Notify Observers
 			  for( GameObserver gO : this.observers ){
-				  System.out.println("told observers to move.  " + moveValue);
 				  gO.checkerMove(from, to);
+				  gO.setStatus("Valid Move: " + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
 			  }
+			  //
+		  }
+		  else{
+				//Notify Observers
+				  for( GameObserver gO : this.observers ){
+					  gO.checkerMove(from, from);
+					  gO.setStatus("Invalid Move on GameBoard: " + from.toString() + " to " + to.toString() + ". " + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
+				  }
+				//
 		  }
 		  return moveValue;
 	  }
-	  System.out.println("moveValidator.isValid(from, to) == false");
 	  return false;
 	  
   }
@@ -208,7 +228,6 @@ public class GameImpl implements Game {
 	  
 	//Notify Observers
 	  for( GameObserver gO : this.observers ){
-		  System.out.println("told observers to move opponent to bar");
 		  gO.checkerMove(opponentLoc, otherPlayerBar);
 	  }
   
@@ -247,6 +266,10 @@ public class GameImpl implements Game {
 	@Override
 	public void addObserver(GameObserver observer) {
 		this.observers.add(observer);		
+	}
+	
+	public ArrayList<GameObserver> getObservers(){
+		return this.observers;
 	}
 }
 

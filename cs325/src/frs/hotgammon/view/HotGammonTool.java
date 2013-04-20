@@ -1,6 +1,7 @@
 package frs.hotgammon.view;
 
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 
 import frs.hotgammon.framework.Game;
 
@@ -12,61 +13,38 @@ import minidraw.standard.AbstractTool;
 
 public class HotGammonTool extends AbstractTool{
 
-	private Tool dieTool;
-	private Tool moveTool;
 	private Tool currentTool;
 	private Game game;
-	
-	public HotGammonTool(DrawingEditor editor, Game game) {
+	final public static String DIE_ROLL_TOOL = "DIE_ROLL_TOOL";
+	final public static String MOVE_TOOL = "MOVE_TOOL";
+	private HashMap<String, Tool> states;
+		
+	public HotGammonTool( DrawingEditor editor, Game game, String initialState, HashMap<String,Tool> states) {
 		super(editor);
-		this.game = game;
-		this.dieTool = new DieRollTool(editor,game);
-		this.moveTool = new MoveTool(editor,game);
+		this.game = game;		
+		this.states = states;
+		setState(initialState);
 	}
 
 	public void mouseUp(MouseEvent e, int x, int y) { 
 		
-		setTool(e);
-	    
 	    this.currentTool.mouseUp(e,x,y);
 	    
-	    editor.showStatus(game.getPlayerInTurn().toString() + " has " + game.getNumberOfMovesLeft() + " moves left..");
-		
+	    //editor.showStatus(game.getPlayerInTurn().toString() + " has " + game.getNumberOfMovesLeft() + " moves left..");
+	}
+	
+	public void mouseDrag(MouseEvent e, int x, int y) {
 
+	    this.currentTool.mouseDrag(e,x,y);
 	}
 	
 	public void mouseDown(MouseEvent e, int x, int y) {
 
-		setTool(e);
-		
 	    this.currentTool.mouseDown(e,x,y);
 	}
-	
-	private void setTool(MouseEvent e){
-		Drawing model = editor().drawing();
-	    
-	    model.lock();
-	    
-	    Figure clickedFig = model.findFigure(e.getX(), e.getY());
 		
-	    model.unlock();
-	    
-	    if (isDieFigure(clickedFig)){
-	    	this.currentTool = dieTool;
-	    }
-
-	    if (isCheckerFigure(clickedFig)){
-	    	this.currentTool = moveTool;
-	    }
+	public void setState(String toolKey){
+		this.currentTool = states.get(toolKey);
 	}
 	
-	private boolean isCheckerFigure(Figure f){
-		return f != null && (f instanceof CheckerFigure);
-	}
-	
-	
-	private boolean isDieFigure(Figure f){
-		return f != null && (f instanceof DieFigure);
-	}
-
 }

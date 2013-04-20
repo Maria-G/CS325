@@ -142,4 +142,9 @@ public class StubGame1 implements Game {
   public void addObserver(GameObserver gl) { 
 	  this.observers.add(gl);
   }
+
+@Override
+public ArrayList<GameObserver> getObservers() {
+	return this.observers;
+}
 }

@@ -3,6 +3,7 @@ package frs.hotgammon.view;
 import java.awt.event.MouseEvent;
 
 import frs.hotgammon.framework.Game;
+import frs.hotgammon.framework.GameObserver;
 
 import minidraw.framework.Drawing;
 import minidraw.framework.DrawingEditor;
@@ -30,8 +31,15 @@ public class DieRollTool extends AbstractTool{
 	    
 	    if (isDieFigure(clickedFig)){
 	    	game.nextTurn();
+	    	((HotGammonTool) editor.tool()).setState(HotGammonTool.MOVE_TOOL);
 	    }
-	    
+	    else{
+		   //Notify Observers
+			  for( GameObserver gO : this.game.getObservers() ){
+				  gO.setStatus(this.game.getPlayerInTurn().toString() + "'s turn is over. The dice must be rolled for the next turn to start.");
+			  }
+			//
+	    }
 
 	}
 	

@@ -30,4 +30,8 @@ public interface GameObserver {
    */
   public void diceRolled( int[] values );
 
+  /** this method is invoked whenever the status message is to be changed.
+   * @param status the status to be set
+   */
+  public void setStatus( String status );
 }

@@ -1,5 +1,7 @@
 package frs.hotgammon.framework;
 
+import java.util.ArrayList;
+
 /** This interface encapsulate all responsibilites of
     a Backgammon game. Please consult the book's
     project part for further descriptions.
@@ -122,4 +124,6 @@ public interface Game {
    * @param observer the observer to notify in case of state changes.
    */
   public void addObserver(GameObserver observer);
+
+  public ArrayList<GameObserver> getObservers();
 }

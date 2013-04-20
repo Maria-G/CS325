@@ -2,7 +2,7 @@ package frs.hotgammon.view;
 
 import java.awt.Point;
 
-import minidraw.framework.Drawing;
+import minidraw.framework.DrawingEditor;
 import minidraw.framework.Figure;
 import minidraw.standard.StandardDrawing;
 
@@ -17,30 +17,39 @@ public class HotGammonDrawing extends StandardDrawing implements GameObserver {
 	private int diceIdx = 0;
 	Point[] diePoints = {new Point(216, 202), new Point(306, 202)};
 	private Game subject;
+	private DrawingEditor editor;
 		
+	public HotGammonDrawing(DrawingEditor editor){
+		this.editor = editor;
+	}
+	
 	public void setGame(Game subject){
 		this.subject = subject;
-		
 	}
 	
 	@Override
 	public void checkerMove(Location from, Location to) {
 
-		//Remove Checker from current location
 		Point pFrom = Convert.locationAndCount2xy(from, subject.getCount(from) + 1);
+		Point pTo = Convert.locationAndCount2xy(to, subject.getCount(to));
+		
+		lock();
+		
 	    Figure clickedFig = findFigure(pFrom.x, pFrom.y);
-	    if(isChecker(clickedFig)){
-	    	remove(clickedFig);
-	    	invalidate();
+	    
+	    unlock();
+	    
+	    if(!isChecker(clickedFig)){
+	    	Color color = subject.getColor(to);
+	    	clickedFig = new CheckerFigure(color, pFrom);
+			add(clickedFig);	
 	    }
 
-	    //Add Checker to new Location
-		Point pTo = Convert.locationAndCount2xy(to, subject.getCount(to));
-		Color color = subject.getColor(to);
-		//Color color = Color.RED;
-		addChecker(color, pTo);	
-		
+		clickedFig.moveBy(pTo.x - pFrom.x, pTo.y - pFrom.y);
 
+		if(!(from.equals(Location.R_BEAR_OFF) || from.equals(Location.R_BEAR_OFF))  && this.subject.getNumberOfMovesLeft() == 0){
+			((HotGammonTool) this.editor.tool()).setState(HotGammonTool.DIE_ROLL_TOOL);
+		}
 	}
 	
 	private boolean isChecker(Figure fig){
@@ -52,6 +61,7 @@ public class HotGammonDrawing extends StandardDrawing implements GameObserver {
 		for(int i = 0; i < values.length; i++){
 			addDie(values[i]);
 		}
+		((HotGammonTool) this.editor.tool()).setState(HotGammonTool.MOVE_TOOL);
 	}
 
 	public void addDie(int value) {
@@ -72,6 +82,11 @@ public class HotGammonDrawing extends StandardDrawing implements GameObserver {
 		CheckerFigure cF = new CheckerFigure(color, pt);
 		add(cF);
 		cF.changed();
+	}
+
+	@Override
+	public void setStatus(String status) {
+		this.editor.showStatus(status);
 	}
 	
 
