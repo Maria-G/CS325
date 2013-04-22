@@ -152,6 +152,9 @@ public class GameImpl implements Game {
 		  }
 		  return true;
 	  }
+	  if(from == to){
+		  return false;
+	  }
 	  ///
 	  if (movesLeft == 0){
 		//Notify Observers
