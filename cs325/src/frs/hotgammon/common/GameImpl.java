@@ -141,20 +141,38 @@ public class GameImpl implements Game {
 	  return (dRoll[0] > dRoll[1]) ? Color.RED : Color.BLACK;
   }
   
+  private void moveDuringConfigure(Location from, Location to){
+	  Color checkerColor = (from == Location.R_BEAR_OFF) ? Color.RED : Color.BLACK;
+	  gameBoard.move(from, to, checkerColor);
+	  
+	  //Notify Observers
+	  for( GameObserver gO : this.observers ){
+		  gO.checkerMove(from, to);
+	  }
+  }
   public boolean move(Location from, Location to) { 
 	  ///If from BearOff During Configure call, allow
 	  if((from == Location.R_BEAR_OFF || from == Location.B_BEAR_OFF) && turns == 0){
-		  Color checkerColor = (from == Location.R_BEAR_OFF) ? Color.RED : Color.BLACK;
-		  gameBoard.move(from, to, checkerColor);
-		//Notify Observers
-		  for( GameObserver gO : this.observers ){
-			  gO.checkerMove(from, to);
-		  }
+		  moveDuringConfigure(from, to);
 		  return true;
 	  }
+	  //Note to self: Should Add to MoveValidator logic?
 	  if(from == to){
 		  return false;
 	  }
+
+	  //Check for Valid Moves, if none, set movesLeft to 0.
+	  if(!validMovesExist()){
+		  movesLeft = 0;
+		//Notify Observers
+		  for( GameObserver gO : this.observers ){
+			  gO.checkerMove(from, from);
+			  gO.setStatus(getPlayerInTurn().toString() + " has no valid moves left...");
+		  }
+		//
+		  return false;
+	  }
+	  
 	  ///
 	  if (movesLeft == 0){
 		//Notify Observers
@@ -195,6 +213,54 @@ public class GameImpl implements Game {
 		  return moveValue;
 	  }
 	  return false;
+	  
+  }
+  
+  private boolean validMovesExist(){
+
+	 List<Integer> diceOptions = diceRoll;
+		 
+	 //Check bar
+	 Location barOfPlayerInTurn = getBarOfPlayerInTurn();
+	 int barCount = getCount(barOfPlayerInTurn);
+	 if(barCount > 0){
+		 for(int j = 0; j < diceOptions.size(); j++){
+			 Location to = getToLocationFromBar(diceOptions.get(j));
+			 if(moveValidator.isValid(barOfPlayerInTurn, to)){
+				 return true;
+			 }
+		 }
+	 }
+	 //Check Rest of Locations if Bar is empty
+	 else{
+		 for(Location frmLoc : Location.values()){
+			 if(getCount(frmLoc) > 0 && getColor(frmLoc) == playerInTurn){
+				 for(int j = 0; j < diceOptions.size(); j++){
+					 Location to = Location.findLocation(playerInTurn, frmLoc, diceOptions.get(j));
+					 if(moveValidator.isValid(frmLoc, to)){
+						 return true;
+					 }
+				 }
+			 }
+		 }
+		 
+	 }
+	//No valid moves:
+	return false;
+	  
+  }
+  
+  private Location getBarOfPlayerInTurn(){
+	  return (playerInTurn == Color.BLACK)? Location.B_BAR : Location.R_BAR; 
+  }
+  
+  private Location getToLocationFromBar(int dValue){
+	  List<Location> redInnerTable = Arrays.asList(Location.R1, Location.R2, Location.R3, Location.R4, Location.R5, Location.R6);
+	  List<Location> blackInnerTable = Arrays.asList( Location.B1, Location.B2, Location.B3, Location.B4, Location.B5, Location.B6);
+	  
+	  List<Location> destinationInnerTable = (playerInTurn == Color.BLACK) ? redInnerTable : blackInnerTable;
+		
+	  return destinationInnerTable.get(dValue - 1);
 	  
   }
   

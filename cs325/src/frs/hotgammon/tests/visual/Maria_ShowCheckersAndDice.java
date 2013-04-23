@@ -43,7 +43,7 @@ public class Maria_ShowCheckersAndDice {
     editor.open();
         
     //Game creation && AddObserver
-    Game game = new GameImpl(new AlphaMonFactory());//new StubGame1();//new DeltaMonFactory()
+    Game game = new GameImpl(new BetaMonFactory());//new AlphaMonFactory());//new StubGame1();//new DeltaMonFactory()
     game.addObserver((HotGammonDrawing)editor.drawing());
     ((HotGammonDrawing) editor.drawing()).setGame(game);
     //

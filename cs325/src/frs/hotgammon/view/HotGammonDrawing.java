@@ -30,8 +30,8 @@ public class HotGammonDrawing extends StandardDrawing implements GameObserver {
 	@Override
 	public void checkerMove(Location from, Location to) {
 
-		Point pFrom = Convert.locationAndCount2xy(from, subject.getCount(from) + 1);
-		Point pTo = Convert.locationAndCount2xy(to, subject.getCount(to));
+		Point pFrom = Convert.locationAndCount2xy(from, subject.getCount(from));// + 1);
+		Point pTo = Convert.locationAndCount2xy(to, subject.getCount(to) - 1);
 		
 		lock();
 		
@@ -39,15 +39,17 @@ public class HotGammonDrawing extends StandardDrawing implements GameObserver {
 	    
 	    unlock();
 	    
-	    if(!isChecker(clickedFig)){
+	    if(!isChecker(clickedFig) && (from.equals(Location.R_BEAR_OFF) || from.equals(Location.B_BEAR_OFF))){
 	    	Color color = subject.getColor(to);
 	    	clickedFig = new CheckerFigure(color, pFrom);
 			add(clickedFig);	
 	    }
 
-		clickedFig.moveBy(pTo.x - pFrom.x, pTo.y - pFrom.y);
+	    if(!from.equals(to)){
+	    	clickedFig.moveBy(pTo.x - pFrom.x, pTo.y - pFrom.y);
+	    }
 
-		if(!(from.equals(Location.R_BEAR_OFF) || from.equals(Location.R_BEAR_OFF))  && this.subject.getNumberOfMovesLeft() == 0){
+		if(!(from.equals(Location.R_BEAR_OFF) || from.equals(Location.B_BEAR_OFF))  && this.subject.getNumberOfMovesLeft() == 0){
 			((HotGammonTool) this.editor.tool()).setState(HotGammonTool.DIE_ROLL_TOOL);
 		}
 	}
