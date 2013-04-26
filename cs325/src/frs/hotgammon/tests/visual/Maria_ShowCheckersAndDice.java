@@ -9,13 +9,17 @@ import javax.swing.*;
 
 import frs.hotgammon.common.GameImpl;
 import frs.hotgammon.framework.Game;
+import frs.hotgammon.tests.preGuiTests.stubs.Fixed_BlackStarts_SemiMonFactory;
 import frs.hotgammon.variants.factories.AlphaMonFactory;
 import frs.hotgammon.variants.factories.BetaMonFactory;
 import frs.hotgammon.variants.factories.DeltaMonFactory;
-import frs.hotgammon.view.DieRollTool;
+import frs.hotgammon.variants.factories.SemiMonFactory;
+import frs.hotgammon.view.HotGammonApplication;
 import frs.hotgammon.view.HotGammonDrawing;
-import frs.hotgammon.view.HotGammonTool;
-import frs.hotgammon.view.MoveTool;
+import frs.hotgammon.view.tools.DieRollTool;
+import frs.hotgammon.view.tools.GameOverTool;
+import frs.hotgammon.view.tools.HotGammonTool;
+import frs.hotgammon.view.tools.MoveTool;
 
 /** Show the dice and some checkers on the
  * backgammon board.  
@@ -37,23 +41,28 @@ import frs.hotgammon.view.MoveTool;
 public class Maria_ShowCheckersAndDice {
   
   public static void main(String[] args) {
-    DrawingEditor editor = 
-      new MiniDrawApplication( "Show HotGammon figures...",  
-                               new HotGammonFactory() );
+	    
+	    //Game creation 
+	    Game game = new GameImpl(new AlphaMonFactory());//BetaMonFactory());//new DeltaMonFactory()
+	   //
+	  
+	  DrawingEditor editor = 
+    //  new MiniDrawApplication( "Show HotGammon figures...",  
+     //                          new HotGammonFactory(game) );
+	
+	      new HotGammonApplication( "HotGammon Game",  
+	                               new HotGammonFactory(), game );
+	  
     editor.open();
-        
-    //Game creation && AddObserver
-    Game game = new GameImpl(new BetaMonFactory());//new AlphaMonFactory());//new StubGame1();//new DeltaMonFactory()
-    game.addObserver((HotGammonDrawing)editor.drawing());
-    ((HotGammonDrawing) editor.drawing()).setGame(game);
-    //
     
     //HotGammonTool Setup
     final Tool dieRollTool = new DieRollTool(editor,game);
     final Tool moveTool = new MoveTool(editor,game);
+    final Tool gameOverTool = new GameOverTool(editor);
     HashMap<String, Tool> states = new HashMap<String, Tool>(){{
 		put( HotGammonTool.DIE_ROLL_TOOL, dieRollTool );
 		put( HotGammonTool.MOVE_TOOL, moveTool );
+		put( HotGammonTool.GAME_OVER_TOOL, gameOverTool);
 		}};
 	//
     
@@ -62,18 +71,15 @@ public class Maria_ShowCheckersAndDice {
     		new HotGammonTool(editor,game, HotGammonTool.DIE_ROLL_TOOL, states) );
     //
     
-    // Start Game : 
-    game.newGame();
-    game.nextTurn();
-    //
     
   }
 }
 
 class HotGammonFactory implements Factory {
+		
   public DrawingView createDrawingView( DrawingEditor editor ) {
     DrawingView view = 
-      new StdViewWithBackground(editor, "board");
+    		new StdViewWithBackground(editor, "board");
     return view;
   }
 
@@ -82,7 +88,7 @@ class HotGammonFactory implements Factory {
   }
 
   public JTextField createStatusField( DrawingEditor editor ) {
-    JTextField statusField = new JTextField( "Hello HotGammon..." );
+    JTextField statusField = new JTextField( "HotGammon Game" );
     statusField.setEditable(false);
     return statusField;
   }

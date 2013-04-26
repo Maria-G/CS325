@@ -10,7 +10,7 @@ public class FixedRedStartsRandomRollDeterminer implements RollDeterminer {
 		
 	@Override
 	public void rollDice() {
-		diceRoll = POSSIBLE_DICE_ROLLS[index];		
+		diceRoll = POSSIBLE_DICE_ROLLS[index % 4];		
 		
 		if (diceRoll[0] == diceRoll[1]){
 			diceRoll = new int[]{diceRoll[0], diceRoll[1], diceRoll[0], diceRoll[1]};

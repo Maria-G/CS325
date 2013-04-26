@@ -10,51 +10,80 @@ import frs.hotgammon.framework.Color;
 import frs.hotgammon.framework.Game;
 import frs.hotgammon.framework.GameObserver;
 import frs.hotgammon.framework.Location;
+import frs.hotgammon.view.figures.CheckerFigure;
+import frs.hotgammon.view.figures.DieFigure;
+import frs.hotgammon.view.tools.HotGammonTool;
 
 public class HotGammonDrawing extends StandardDrawing implements GameObserver {
 
 	private DieFigure[] dice = new DieFigure[2];
 	private int diceIdx = 0;
 	Point[] diePoints = {new Point(216, 202), new Point(306, 202)};
-	private Game subject;
-	private DrawingEditor editor;
-		
+	protected Game subject;
+	protected DrawingEditor editor;
+
 	public HotGammonDrawing(DrawingEditor editor){
 		this.editor = editor;
 	}
-	
+
+	public HotGammonDrawing(DrawingEditor editor, Game game) {
+		this(editor);
+		setGame(game);
+	}
+
 	public void setGame(Game subject){
 		this.subject = subject;
+	}
+
+
+	private boolean isGameMotivatedMove(Location from, Location to){
+		return (from.equals(Location.R_BEAR_OFF) || 
+				from.equals(Location.B_BEAR_OFF) || 
+				to.equals(Location.B_BAR) || 
+				to.equals(Location.R_BAR)) 
+				&& (isMove(from,to));
+	}
+	
+	private boolean isMove(Location from, Location to){
+		return !(from.equals(to));
 	}
 	
 	@Override
 	public void checkerMove(Location from, Location to) {
 
-		Point pFrom = Convert.locationAndCount2xy(from, subject.getCount(from));// + 1);
-		Point pTo = Convert.locationAndCount2xy(to, subject.getCount(to) - 1);
-		
-		lock();
-		
-	    Figure clickedFig = findFigure(pFrom.x, pFrom.y);
-	    
-	    unlock();
-	    
-	    if(!isChecker(clickedFig) && (from.equals(Location.R_BEAR_OFF) || from.equals(Location.B_BEAR_OFF))){
-	    	Color color = subject.getColor(to);
-	    	clickedFig = new CheckerFigure(color, pFrom);
-			add(clickedFig);	
-	    }
 
-	    if(!from.equals(to)){
-	    	clickedFig.moveBy(pTo.x - pFrom.x, pTo.y - pFrom.y);
-	    }
+		if(isGameMotivatedMove(from, to)){
+			
+			Point pFrom = Convert.locationAndCount2xy(from, subject.getCount(from));
+			Point pTo = Convert.locationAndCount2xy(to, subject.getCount(to) - 1);
+
+			lock();
+
+		    Figure clickedFig = findFigure(pFrom.x, pFrom.y);
+
+		    unlock();
+
+		    if(!isChecker(clickedFig)){
+		    	Color color = subject.getColor(to);
+		    	clickedFig = new CheckerFigure(color, pFrom);
+		    	lock();
+				add(clickedFig);	
+				unlock();
+		    }
+
+		    lock();
+			clickedFig.moveBy(pTo.x - pFrom.x, pTo.y - pFrom.y);
+			unlock();
+
+		}
 
 		if(!(from.equals(Location.R_BEAR_OFF) || from.equals(Location.B_BEAR_OFF))  && this.subject.getNumberOfMovesLeft() == 0){
 			((HotGammonTool) this.editor.tool()).setState(HotGammonTool.DIE_ROLL_TOOL);
 		}
+		
 	}
-	
-	private boolean isChecker(Figure fig){
+
+	protected boolean isChecker(Figure fig){
 		return (fig != null && fig instanceof CheckerFigure);
 	}
 
@@ -63,12 +92,18 @@ public class HotGammonDrawing extends StandardDrawing implements GameObserver {
 		for(int i = 0; i < values.length; i++){
 			addDie(values[i]);
 		}
-		((HotGammonTool) this.editor.tool()).setState(HotGammonTool.MOVE_TOOL);
+
+		if((this.subject.getPlayerInTurn() == Color.NONE)){
+			((HotGammonTool) this.editor.tool()).setState(HotGammonTool.DIE_ROLL_TOOL);
+		}
+		else{
+			((HotGammonTool) this.editor.tool()).setState(HotGammonTool.MOVE_TOOL);
+		}
 	}
 
 	public void addDie(int value) {
 		int diceIdxVal = diceIdx % 2;
-		
+
 		if ( dice[diceIdxVal] == null ){
 			dice[diceIdxVal] = new DieFigure(value, diePoints[diceIdxVal]);
 			add(dice[diceIdxVal]);
@@ -79,7 +114,7 @@ public class HotGammonDrawing extends StandardDrawing implements GameObserver {
 		}
 		diceIdx++;
 	}
-	
+
 	public void addChecker(Color color, Point pt){
 		CheckerFigure cF = new CheckerFigure(color, pt);
 		add(cF);
@@ -90,6 +125,11 @@ public class HotGammonDrawing extends StandardDrawing implements GameObserver {
 	public void setStatus(String status) {
 		this.editor.showStatus(status);
 	}
-	
+
+	@Override
+	public void gameOver() {
+		((HotGammonTool) this.editor.tool()).setState(HotGammonTool.GAME_OVER_TOOL);		
+	}
+
 
 }

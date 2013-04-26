@@ -99,11 +99,22 @@ public class GameImpl implements Game {
 	    		new Placement(Color.BLACK,Location.R1),
 	    		new Placement(Color.BLACK,Location.R1),
 	    });
+	  
+	//Notify Observers
+	  for( GameObserver gO : this.observers ){
+		  gO.setStatus("New Game: Click the dice to roll. Player with the highest dice value goes first!");
+		  gO.diceRolled(new int[]{1,1});
+	  }
 
   }
   
   public void nextTurn() {
 
+	  //Check For Winner
+	  if(isWinner()){
+		  return;
+	  }
+	  
 	  playerInTurn = turnDeterminer.nextTurn();
 	  
 	  //Roll Dice
@@ -115,7 +126,8 @@ public class GameImpl implements Game {
 			  diceRollDeterminer.rollDice();
 			  dRoll = diceRollDeterminer.getDiceRoll();
 		  }
-		  playerInTurn = determineStartingPlayer(dRoll);		  
+		  playerInTurn = determineStartingPlayer(dRoll);
+		
 	  }
 	  
 	  //Create diceRoll 
@@ -129,10 +141,15 @@ public class GameImpl implements Game {
 	  turns++;
 	  movesLeft = diceRoll.size();
 	  
+	  String statusMessage = "";
+	  if(turns == 1){
+		  statusMessage = playerInTurn.toString() + " rolled the highest value! ";
+	  }
+	  
 	  //Notify Observers
 	  for( GameObserver gO : this.observers ){
 		  gO.diceRolled(diceThrown());
-		  gO.setStatus(getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
+		  gO.setStatus(statusMessage + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
 	  }
 	  
   }
@@ -151,6 +168,7 @@ public class GameImpl implements Game {
 	  }
   }
   public boolean move(Location from, Location to) { 
+	  	  
 	  ///If from BearOff During Configure call, allow
 	  if((from == Location.R_BEAR_OFF || from == Location.B_BEAR_OFF) && turns == 0){
 		  moveDuringConfigure(from, to);
@@ -212,6 +230,12 @@ public class GameImpl implements Game {
 		  }
 		  return moveValue;
 	  }
+
+		//Notify Observers
+		  for( GameObserver gO : this.observers ){
+			  gO.checkerMove(from, from);
+		  }
+		//
 	  return false;
 	  
   }
@@ -274,7 +298,9 @@ public class GameImpl implements Game {
 		  diceRollArr[i] = diceRoll.get(i);
 	  }
 	  return diceRollArr;}
-  public Color winner() { return winnerDeterminer.winner(turns);}
+  public Color winner() { 
+	  return winnerDeterminer.winner(turns);
+	  }
   public Color getColor(Location location) { return gameBoard.getColorAt(location); }
   public int getCount(Location location) { return gameBoard.getCountAt(location); }
   
@@ -338,6 +364,21 @@ public class GameImpl implements Game {
 	
 	public ArrayList<GameObserver> getObservers(){
 		return this.observers;
+	}
+	
+	private boolean isWinner(){
+		Color winner = winner();
+		if(!winner.equals(Color.NONE)){
+			//Notify Observers
+			  for( GameObserver gO : this.observers ){
+				gO.setStatus(winner + " is the WINNER!");
+				gO.gameOver();
+			  }
+			  //
+			return true;
+		}
+
+		return false;
 	}
 }
 

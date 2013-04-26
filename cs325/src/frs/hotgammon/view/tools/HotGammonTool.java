@@ -1,4 +1,4 @@
-package frs.hotgammon.view;
+package frs.hotgammon.view.tools;
 
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ public class HotGammonTool extends AbstractTool{
 	private Tool currentTool;
 	final public static String DIE_ROLL_TOOL = "DIE_ROLL_TOOL";
 	final public static String MOVE_TOOL = "MOVE_TOOL";
+	final public static String GAME_OVER_TOOL = "GAME_OVER_TOOL";
 	private HashMap<String, Tool> states;
 		
 	public HotGammonTool( DrawingEditor editor, Game game, String initialState, HashMap<String,Tool> states) {

@@ -48,6 +48,7 @@ public class Convert {
    * @param count the number of checkers already on this location
    */
   public static Point locationAndCount2xy(Location location, int count) {
+	
     Rectangle box = mapLocation2Rectangle.get(location);
 
     int size = 27; // magic constant: a checker is 27 pixels wide and high...
@@ -56,7 +57,7 @@ public class Convert {
 
     // calculate y
     int newy;
-    // stack in the y-directio if on the bear off locations
+    // stack in the y-direction if on the bear off locations
     if ( location == Location.B_BEAR_OFF 
          || 
          location == Location.R_BEAR_OFF ) { 

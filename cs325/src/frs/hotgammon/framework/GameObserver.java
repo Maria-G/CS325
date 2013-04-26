@@ -34,4 +34,8 @@ public interface GameObserver {
    * @param status the status to be set
    */
   public void setStatus( String status );
+
+  /** this method is invoked when there is a winner and the game is over.
+   */
+  public void gameOver();
 }

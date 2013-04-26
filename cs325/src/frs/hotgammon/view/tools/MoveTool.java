@@ -1,11 +1,14 @@
-package frs.hotgammon.view;
+package frs.hotgammon.view.tools;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
+import frs.hotgammon.framework.Color;
 import frs.hotgammon.framework.Game;
 import frs.hotgammon.framework.GameObserver;
 import frs.hotgammon.framework.Location;
+import frs.hotgammon.view.Convert;
+import frs.hotgammon.view.figures.CheckerFigure;
 
 import minidraw.framework.Drawing;
 import minidraw.framework.DrawingEditor;
@@ -91,9 +94,19 @@ public class MoveTool extends AbstractTool{
 	   if ( isCheckerFigure(draggedFigure) ) {
 		   Location from = Convert.xy2Location(originalPt.x, originalPt.y);
 		   Location to = Convert.xy2Location(e.getX(), e.getY());
-			
+
+
 		   draggedFigure.moveBy(originalPt.x - e.getX(), originalPt.y - e.getY());
-		   game.move(from, to);
+		   
+		   if( isLocation(to) && isLocation(from) ){
+			   if(game.move(from, to)){
+				   
+					Point pTo = Convert.locationAndCount2xy(to, (game.getCount(to) - 1));
+					Point pFrom = Convert.locationAndCount2xy(from, game.getCount(from));
+					draggedFigure.moveBy(pTo.x - pFrom.x, pTo.y - pFrom.y);
+					
+			   }
+		   }
 		   
 	   } 
 	   
@@ -103,6 +116,18 @@ public class MoveTool extends AbstractTool{
 	   
 	 }
 	  
+	 private boolean isLocation(Location loc){
+		 if(loc == null){
+			 return false;
+		 }
+		 for(Location location : Location.values()){
+			 if(loc.equals(location)){
+				 return true;
+			 }
+		 }
+		return false;
+		 
+	 }
 	
 	 /**
 	  * Factory method to create a Drag tracker. It is used to drag a figure.

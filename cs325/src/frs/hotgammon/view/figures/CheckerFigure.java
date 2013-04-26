@@ -1,4 +1,4 @@
-package frs.hotgammon.view;
+package frs.hotgammon.view.figures;
 
 import java.awt.Point;
 import frs.hotgammon.framework.Color;
