@@ -8,6 +8,7 @@ import minidraw.framework.*;
 import javax.swing.*;
 
 import frs.hotgammon.common.GameImpl;
+import frs.hotgammon.common.VisualGameImpl;
 import frs.hotgammon.framework.Game;
 import frs.hotgammon.tests.preGuiTests.stubs.Fixed_BlackStarts_SemiMonFactory;
 import frs.hotgammon.variants.factories.AlphaMonFactory;
@@ -43,7 +44,7 @@ public class Maria_ShowCheckersAndDice {
   public static void main(String[] args) {
 	    
 	    //Game creation 
-	    Game game = new GameImpl(new AlphaMonFactory());//BetaMonFactory());//new DeltaMonFactory()
+	    Game game = new VisualGameImpl(new BetaMonFactory());//AlphaMonFactory());//BetaMonFactory());//new DeltaMonFactory()
 	   //
 	  
 	  DrawingEditor editor = 

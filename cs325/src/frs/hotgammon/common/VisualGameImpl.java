@@ -17,7 +17,7 @@ import frs.hotgammon.framework.Location;
 
 
 
-public class GameImpl implements Game {
+public class VisualGameImpl implements Game {
   private Board gameBoard;
   private Color playerInTurn;
 
@@ -29,9 +29,16 @@ public class GameImpl implements Game {
   private TurnDeterminer turnDeterminer;
   private RollDeterminer diceRollDeterminer;
   private ArrayList<GameObserver> observers = new ArrayList<GameObserver>();
+  
+  //Added
+
+	private ArrayList<MoveRecord> turnMoves;
+	private int turnMovesIdx;
+  
+  //
 
   
-  public GameImpl(MoveValidator mValidator, WinnerDeterminer wDeterminer, TurnDeterminer tDeterminer, RollDeterminer drDeterminer){
+  public VisualGameImpl(MoveValidator mValidator, WinnerDeterminer wDeterminer, TurnDeterminer tDeterminer, RollDeterminer drDeterminer){
 	  mValidator.setGame(this);
 	  wDeterminer.setGame(this);
 	  tDeterminer.setGame(this);
@@ -41,7 +48,7 @@ public class GameImpl implements Game {
 	  diceRollDeterminer = drDeterminer;
   }
   
-  public GameImpl(MonFactory factory){
+  public VisualGameImpl(MonFactory factory){
 	  setFactory(factory);
   }
   
@@ -105,7 +112,17 @@ public class GameImpl implements Game {
 		  gO.setStatus("New Game: Click the dice to roll. Player with the highest dice value goes first!");
 		  gO.diceRolled(new int[]{1,1});
 	  }
+	  
+	//Added
 
+		this.turnMoves = new ArrayList<MoveRecord>();
+		/**for(int i = 0; i < diceRoll.size(); i++){
+			this.turnMoves.add(new MoveRecord());
+		}*/
+		this.turnMovesIdx = 0;
+	  
+	  //
+	  
   }
   
   public void nextTurn() {
@@ -152,6 +169,18 @@ public class GameImpl implements Game {
 		  gO.setStatus(statusMessage + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
 	  }
 	  
+
+	  //Added
+	  
+	  this.turnMoves = new ArrayList<MoveRecord>();
+	  for(int i = 0; i < movesLeft; i++){
+		  this.turnMoves.add(new MoveRecord());
+	  }
+	  this.turnMovesIdx = 0;
+	  
+	  //
+
+	  
   }
   
   private Color determineStartingPlayer(int[] dRoll){
@@ -167,8 +196,10 @@ public class GameImpl implements Game {
 		  gO.checkerMove(from, to);
 	  }
   }
+  
   public boolean move(Location from, Location to) { 
-	  	  
+	  	 
+	  
 	  ///If from BearOff During Configure call, allow
 	  if((from == Location.R_BEAR_OFF || from == Location.B_BEAR_OFF) && turns == 0){
 		  moveDuringConfigure(from, to);
@@ -178,6 +209,17 @@ public class GameImpl implements Game {
 	  if(from == to){
 		  return false;
 	  }
+	  
+
+		//ADDED
+		  //If move is the reverse of a move previously made during this turn, allow.
+		  Move m = new Move(from,to);
+		  if(isMoveBack(m)){
+			  executeMoveBack(m);
+			  return true;
+		  }
+		  //ADDED
+		  
 
 	  //Check for Valid Moves, if none, set movesLeft to 0.
 	  if(!validMovesExist()){
@@ -218,6 +260,13 @@ public class GameImpl implements Game {
 				  gO.checkerMove(from, to);
 				  gO.setStatus("Valid Move: " + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
 			  }
+			  //
+			  
+			  //ADDED
+			  
+			  this.turnMoves.get(this.turnMovesIdx).setMove(new Move(from,to));
+			  this.turnMovesIdx++;
+			  
 			  //
 		  }
 		  else{
@@ -298,6 +347,7 @@ public class GameImpl implements Game {
 		  diceRollArr[i] = diceRoll.get(i);
 	  }
 	  return diceRollArr;}
+  
   public Color winner() { 
 	  return winnerDeterminer.winner(turns);
 	  }
@@ -311,6 +361,10 @@ public class GameImpl implements Game {
 		  remIdx = 0;
 	  }
 	  diceRoll.remove(remIdx);
+	  
+	  //Added
+	  this.turnMoves.get(this.turnMovesIdx).setDieValueUsed(diceValueUsed);
+	  //
   }
   
   private void moveOpponentToBar(Location opponentLoc){
@@ -324,7 +378,13 @@ public class GameImpl implements Game {
 	  for( GameObserver gO : this.observers ){
 		  gO.checkerMove(opponentLoc, otherPlayerBar);
 	  }
-  
+  //
+
+	  //Added
+	  Move aMove = new Move(opponentLoc, otherPlayerBar);
+	  this.turnMoves.get(this.turnMovesIdx).setAssociatedMoveToBar(aMove);
+	  //
+	  
   }
   
   protected Location otherPlayerBar(){
@@ -387,5 +447,150 @@ public class GameImpl implements Game {
 
 		return false;
 	}
+
+	  
+	private boolean isMoveBack(Move m){
+		if ( getIdxOfInTurnMoves(m) == -1 ){
+			return false;
+		}
+		return true;
+	}
+	
+	private int getIdxOfInTurnMoves(Move m){
+			for(int i = 0; i < this.turnMoves.size(); i++){
+				MoveRecord mR = this.turnMoves.get(i);
+
+				Move mRMove = mR.getMove();
+				if(mRMove != null){
+					if(mRMove.isReverse(m)){
+						return i;
+					}
+				}
+			}
+		return -1;
+	}
+	 
+	private void executeMoveBack(Move m){
+		int idx = getIdxOfInTurnMoves(m);
+		MoveRecord mRec = this.turnMoves.get(idx);
+		
+		gameBoard.move(m.getFrom(), m.getTo(), getColor(m.getFrom()));
+		
+		//Add back used diceValue
+		diceRoll.add(mRec.getDieValueUsed());
+		
+		//Add +1 to movesLeft
+		movesLeft++;
+		
+		//Notify Observers
+		  for( GameObserver gO : this.observers ){
+			  //Move back
+			  gO.checkerMove(m.to, m.from);
+			  //Move Back from Bar if neccessary
+			  Move associatedMove = mRec.getAssociatedMoveToBar();
+			  if(associatedMove != null){
+				  gO.checkerMove(associatedMove.to, associatedMove.from);				  
+			  }
+		  }
+	  //
+		  
+		  //Remove mRec
+		  this.turnMoves.remove(idx);
+		  this.turnMoves.add(new MoveRecord());
+		  this.turnMovesIdx--;
+		
+	}
+	
+	  
+	  
+	  
+	public static class Move{
+		  
+		  private Location from;
+		  private Location to;
+		  
+		  public Move(Location from, Location to){
+			  this.from = from;
+			  this.to = to;
+		  }
+		  
+		  public Location getTo() {
+			return to;
+		}
+
+		public Location getFrom() {
+			return from;
+		}
+
+		public boolean isEqual(Move reverse) {
+			 return (reverse.from == from) && (reverse.to == to);
+		  }
+
+
+		  public boolean isReverse(Move reverse) {
+				 return (reverse.from == to) && (reverse.to == from);
+		  }
+		  
+		public boolean isEqual(Location otherFrom, Location otherTo){
+			  return (otherFrom == from) && (otherTo == to);
+		  }
+		  
+		  public boolean isReverse(Location otherFrom, Location otherTo){
+			  return (otherFrom == to) && (otherTo == from);
+		  }
+		  
+		  public Move reverse(){
+			  return new Move(to, from);
+		  }
+		  
+		  public String toString(){
+			  return "("+from.toString()+","+to.toString()+")";
+		  }
+		  
+	  }
+		
+	 public static class MoveRecord{
+		  
+		  private Move move;
+		  private Move associatedMoveToBar;
+		  private int dieValueUsed;
+		  
+		  public MoveRecord(){
+		  }
+		  
+		  public MoveRecord(Move move, Move associatedMove, int dieValue){
+			  this.move = move;
+			  this.associatedMoveToBar = associatedMove;
+			  this.dieValueUsed = dieValue;
+		  }
+		  
+		  public void setMove(Move m){
+			  this.move = m;
+		  }
+
+		  public void setAssociatedMoveToBar(Move m){
+			  this.associatedMoveToBar = m;
+		  }
+
+		  public void setDieValueUsed(int dV){
+			  this.dieValueUsed = dV;
+		  }
+		  
+		  public Move getMove(){
+			  return this.move;
+		  }
+
+		  public Move getAssociatedMoveToBar(){
+			  return this.associatedMoveToBar;
+		  }
+
+		  public int getDieValueUsed(){
+			  return this.dieValueUsed;
+		  }
+	  }
+		
+
+
+
 }
 
