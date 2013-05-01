@@ -30,6 +30,9 @@ public class CompleteMoveValidator implements MoveValidator {
 		
 		
 		//Common
+		if(from == to){
+			  return false;
+		  }
 		if ( !containsPlayerPiece(playerInTurn, from) ){//Can't move opponent's piece
 
 			//Notify Observers

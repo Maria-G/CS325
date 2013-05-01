@@ -174,11 +174,7 @@ public class GameImpl implements Game {
 		  moveDuringConfigure(from, to);
 		  return true;
 	  }
-	  //Note to self: Should Add to MoveValidator logic?
-	  if(from == to){
-		  return false;
-	  }
-
+	  
 	  //Check for Valid Moves, if none, set movesLeft to 0.
 	  if(!validMovesExist()){
 		  movesLeft = 0;

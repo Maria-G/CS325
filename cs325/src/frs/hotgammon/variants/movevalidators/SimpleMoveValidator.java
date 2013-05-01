@@ -26,6 +26,9 @@ public class SimpleMoveValidator implements MoveValidator{
 		
 		Color playerInTurn = game.getPlayerInTurn();
 			
+		if(from == to){
+			  return false;
+		  }
 		if ( fromColor != playerInTurn ){ //Can't move opponent's piece
 			//Notify Observers
 			  for( GameObserver gO : this.game.getObservers() ){

@@ -108,17 +108,11 @@ public class VisualGameImpl implements Game {
 	    });
 	  
 	//Notify Observers
-	  for( GameObserver gO : this.observers ){
-		  gO.setStatus("New Game: Click the dice to roll. Player with the highest dice value goes first!");
-		  gO.diceRolled(new int[]{1,1});
-	  }
-	  
+	  notifyObserversOfNewStatus("New Game: Click the dice to roll. Player with the highest dice value goes first!");
+	  notifyObserversOfDiceRolled(new int[]{1,1});
 	//Added
 
 		this.turnMoves = new ArrayList<MoveRecord>();
-		/**for(int i = 0; i < diceRoll.size(); i++){
-			this.turnMoves.add(new MoveRecord());
-		}*/
 		this.turnMovesIdx = 0;
 	  
 	  //
@@ -164,10 +158,9 @@ public class VisualGameImpl implements Game {
 	  }
 	  
 	  //Notify Observers
-	  for( GameObserver gO : this.observers ){
-		  gO.diceRolled(diceThrown());
-		  gO.setStatus(statusMessage + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
-	  }
+	  statusMessage += getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...";
+	  notifyObserversOfNewStatus(statusMessage);
+	  notifyObserversOfDiceRolled(diceThrown());
 	  
 
 	  //Added
@@ -192,24 +185,20 @@ public class VisualGameImpl implements Game {
 	  gameBoard.move(from, to, checkerColor);
 	  
 	  //Notify Observers
-	  for( GameObserver gO : this.observers ){
-		  gO.checkerMove(from, to);
-	  }
+	  notifyObserversOfCheckerMove(from, to);
+  }
+  
+  private boolean isConfigureMove(Location from, Location to){
+	  return (from == Location.R_BEAR_OFF || from == Location.B_BEAR_OFF) && turns == 0;
   }
   
   public boolean move(Location from, Location to) { 
 	  	 
-	  
 	  ///If from BearOff During Configure call, allow
-	  if((from == Location.R_BEAR_OFF || from == Location.B_BEAR_OFF) && turns == 0){
+	  if(isConfigureMove(from, to)){
 		  moveDuringConfigure(from, to);
 		  return true;
 	  }
-	  //Note to self: Should Add to MoveValidator logic?
-	  if(from == to){
-		  return false;
-	  }
-	  
 
 		//ADDED
 		  //If move is the reverse of a move previously made during this turn, allow.
@@ -225,10 +214,8 @@ public class VisualGameImpl implements Game {
 	  if(!validMovesExist()){
 		  movesLeft = 0;
 		//Notify Observers
-		  for( GameObserver gO : this.observers ){
-			  gO.checkerMove(from, from);
-			  gO.setStatus(getPlayerInTurn().toString() + " has no valid moves left...");
-		  }
+		  notifyObserversOfCheckerMove(from, from);
+		  notifyObserversOfNewStatus(getPlayerInTurn().toString() + " has no valid moves left...");
 		//
 		  return false;
 	  }
@@ -236,10 +223,8 @@ public class VisualGameImpl implements Game {
 	  ///
 	  if (movesLeft == 0){
 		//Notify Observers
-		  for( GameObserver gO : this.observers ){
-			  gO.checkerMove(from, from);
-			  gO.setStatus("Invalid Move: " + getPlayerInTurn().toString() + " has 0 moves left...");
-		  }
+		  notifyObserversOfCheckerMove(from, from);
+		  notifyObserversOfNewStatus("Invalid Move: " + getPlayerInTurn().toString() + " has 0 moves left...");
 		//
 		  return false;
 	  }
@@ -256,10 +241,8 @@ public class VisualGameImpl implements Game {
 			  removeDiceValueUsed(from, to);
 			  
 			  //Notify Observers
-			  for( GameObserver gO : this.observers ){
-				  gO.checkerMove(from, to);
-				  gO.setStatus("Valid Move: " + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
-			  }
+			  notifyObserversOfCheckerMove(from, to);
+			  notifyObserversOfNewStatus("Valid Move: " + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
 			  //
 			  
 			  //ADDED
@@ -271,11 +254,8 @@ public class VisualGameImpl implements Game {
 		  }
 		  else{
 				//Notify Observers
-				  for( GameObserver gO : this.observers ){
-					  gO.checkerMove(from, from);
-					  gO.setStatus("Invalid Move on GameBoard: " + from.toString() + " to " + to.toString() + ". " + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
-				  }
-				//
+				  notifyObserversOfCheckerMove(from, from);
+				  notifyObserversOfNewStatus("Invalid Move on GameBoard: " + from.toString() + " to " + to.toString() + ". " + getPlayerInTurn().toString() + " has "+ getNumberOfMovesLeft() +" moves left...");
 		  }
 		  return moveValue;
 	  }
@@ -284,9 +264,33 @@ public class VisualGameImpl implements Game {
 		  for( GameObserver gO : this.observers ){
 			  gO.checkerMove(from, from);
 		  }
+		  notifyObserversOfCheckerMove(from, from);
 		//
 	  return false;
 	  
+  }
+  
+ 
+  //Notify Observers Methods
+  private void notifyObserversOfDiceRolled(int[] diceRolled){
+	  for( GameObserver gO : this.observers ){
+		  gO.diceRolled(diceRolled);
+	  }
+  }
+  private void notifyObserversOfNewStatus(String status){
+	  for( GameObserver gO : this.observers ){
+		  gO.setStatus(status);
+	  }
+  }
+  private void notifyObserversOfCheckerMove(Location from, Location to){
+	  for( GameObserver gO : this.observers ){
+		  gO.checkerMove(from, to);
+	  }
+  }
+  private void notifyObserversOfGameOver(){
+	  for( GameObserver gO : this.observers ){
+		  gO.gameOver();
+	  }
   }
   
   private boolean validMovesExist(){
@@ -338,7 +342,6 @@ public class VisualGameImpl implements Game {
   }
   
   public Color getPlayerInTurn() { return playerInTurn; }
-  
   public int getNumberOfMovesLeft() { return movesLeft; }
   public int[] diceThrown() { return diceRollDeterminer.getDiceRoll(); }//DICE_ROLLS[diceRollIdx]; }
   public int[] diceValuesLeft() { 
@@ -347,10 +350,7 @@ public class VisualGameImpl implements Game {
 		  diceRollArr[i] = diceRoll.get(i);
 	  }
 	  return diceRollArr;}
-  
-  public Color winner() { 
-	  return winnerDeterminer.winner(turns);
-	  }
+  public Color winner() { return winnerDeterminer.winner(turns); }
   public Color getColor(Location location) { return gameBoard.getColorAt(location); }
   public int getCount(Location location) { return gameBoard.getCountAt(location); }
   
@@ -370,15 +370,13 @@ public class VisualGameImpl implements Game {
   private void moveOpponentToBar(Location opponentLoc){
 	  Color colorOfOpponent = opponentColor();
 
-	  Location otherPlayerBar = otherPlayerBar();//(colorOfOpponent == Color.BLACK) ? Location.B_BAR : Location.R_BAR;
+	  Location otherPlayerBar = otherPlayerBar();
 	  gameBoard.place(colorOfOpponent, otherPlayerBar.ordinal());
 	  gameBoard.remove(colorOfOpponent, opponentLoc.ordinal());
 	  
-	//Notify Observers
-	  for( GameObserver gO : this.observers ){
-		  gO.checkerMove(opponentLoc, otherPlayerBar);
-	  }
-  //
+	  //Notify Observers
+	  notifyObserversOfCheckerMove(opponentLoc, otherPlayerBar);
+	  //
 
 	  //Added
 	  Move aMove = new Move(opponentLoc, otherPlayerBar);
@@ -437,10 +435,8 @@ public class VisualGameImpl implements Game {
 		Color winner = winner();
 		if(!winner.equals(Color.NONE)){
 			//Notify Observers
-			  for( GameObserver gO : this.observers ){
-				gO.setStatus(winner + " is the WINNER!");
-				gO.gameOver();
-			  }
+			  notifyObserversOfNewStatus(winner + " is the WINNER!");
+			  notifyObserversOfGameOver();
 			  //
 			return true;
 		}
@@ -483,21 +479,26 @@ public class VisualGameImpl implements Game {
 		movesLeft++;
 		
 		//Notify Observers
-		  for( GameObserver gO : this.observers ){
-			  //Move back
-			  gO.checkerMove(m.to, m.from);
-			  //Move Back from Bar if neccessary
-			  Move associatedMove = mRec.getAssociatedMoveToBar();
-			  if(associatedMove != null){
-				  gO.checkerMove(associatedMove.to, associatedMove.from);				  
-			  }
+		  //Move Back
+		  notifyObserversOfCheckerMove(m.to, m.from);
+		  //Move Back from Bar if needed
+		  Move associatedMove = mRec.getAssociatedMoveToBar();
+		  if(associatedMove != null){
+			  notifyObserversOfCheckerMove(associatedMove.to, associatedMove.from);		  
 		  }
-	  //
+		  
+		  notifyObserversOfNewStatus("Checker returned to previous position, " + getPlayerInTurn() + " has " + getNumberOfMovesLeft() + " moves left...");
+		//
 		  
 		  //Remove mRec
-		  this.turnMoves.remove(idx);
-		  this.turnMoves.add(new MoveRecord());
-		  this.turnMovesIdx--;
+		  removeMoverRecordAt(idx);
+		
+	}
+	
+	private void removeMoverRecordAt(int idx){
+		this.turnMoves.remove(idx);
+		this.turnMoves.add(new MoveRecord());
+		this.turnMovesIdx--;
 		
 	}
 	
